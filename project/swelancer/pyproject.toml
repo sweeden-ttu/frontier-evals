@@ -7,10 +7,12 @@ name = 'swelancer'
 version = "0.1.0"
 dependencies = [
     "alcatraz",
+    "chomsky_vv",
     "flask>=3.1.1",
     "nanoeval",
     "nanoeval-alcatraz",
     "python-dotenv>=1.0.1",
+    "structlog>=25.5.0",
     "tiktoken",
 ]
 requires-python = ">=3.11"
@@ -22,6 +24,7 @@ packages = { find = { include = ["swelancer", "swelancer.*"] } }
 nanoeval = { path = "../common/nanoeval", editable = true }
 alcatraz = { path = "../common/alcatraz", editable = true }
 nanoeval-alcatraz = { path = "../common/nanoeval_alcatraz", editable = true }
+chomsky_vv = { path = "../common/chomsky_vv", editable = true }
 
 [tool.pyright]
 extraPaths = [

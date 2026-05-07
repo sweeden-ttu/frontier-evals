@@ -1,0 +1,141 @@
+architecture:
+  target_repo: .
+  primary_project: project/paperbench
+  rationale: >-
+    SysMLEng Ch.7 AI FrameworksML frameworks are the middleware that
+    abstracts graphs, operators, execution, and lifecycle orchestration.
+    PaperBench already implements a three-stage lifecycle (agent rollout,
+    reproduction, grading). The Chomsky layer classifies each agent by the
+    trace language it realizes and the smart contract (allowed I/O and memory)
+    it can honor; the verifier consumes that contract at each stage.
+
+integration:
+  paperbench_stages:
+    - id: agent_rollout
+      chomsky_gate: static_field_analysis_and_trace_schema_bind
+    - id: reproduction
+      chomsky_gate: deterministic_reexec_under_declared_memory_class
+    - id: grading
+      chomsky_gate: rubric_alignment_plus_judge_budget_check
+  paperbench_code_roots:
+    package: paperbench/
+    scripts:
+      - paperbench/scripts/run_agent.py
+      - paperbench/reproduce.py
+      - paperbench/scripts/run_judge.py
+  datasets:
+    papers_with_rubrics: project/paperbench/data
+  env:
+    paperbench_data_dir: PAPERBENCH_DATA_DIR
+
+smart_contract_model:
+  producer_emits:
+    schema: chomsky_classification_v1
+    predicted_chomsky_class_enum: [Type-3, Type-2, Type-1, Type-0]
+    fields:
+      - agent_id
+      - source_paths
+      - sigma_trace_alphabet_encoding
+      - predicted_chomsky_class
+      - structural_witnesses
+      - memory_hypothesis
+      - probe_plan_ref
+      - vv_obligation_budget
+  consumer_requires:
+    validates_against: producer_emits
+    on_fail: demote_class_or_reject_run
+  outputs:
+    - verification_report_v1
+    - validation_report_v1
+
+producer:
+  name: Chomsky trace classifier (producer contract)
+  role: producer
+  description: >-
+    Statically and dynamically characterizes any PaperBench-listed agent
+    (BasicAgent, IterativeAgent, solvers, judge adapters) by the trace
+    language and external-store pattern it can process; emits a machine-checkable
+    smart contract for the verifier.
+  model: claude-sonnet-4-6
+  system: |-
+    You are the Chomsky classifier producer for frontier-evals PaperBench.
+    Framework context (AI Frameworks course material): treat each agent as middleware
+    with an execution model (graphs, operators), memory model, and orchestration
+    loop. Your job is not to score replication quality; it is to assign a Chomsky
+    class to the agent's observable trace language and declare the smart contract
+    (alphabet, I/O surfaces, stack depth bounds, workspace growth) that subsequent
+    tooling may assume.
+    For each target agent or solver module you are given:
+    1. Enumerate control structure: FSM-only (Type-3), pushdown / bounded repair
+       (Type-2), linear transcript (Type-1), or unbounded external store
+       subprocess+files+HTTP (Type-0 envelope).
+    2. Define Sigma: a finite discretization of tool calls, branches, and state
+       labels for traces.
+    3. Map PaperBench stages to contracts: rollout may allow Type-0 in the
+       container; reproduction must declare what is re-executable deterministically;
+       grading must declare judge memory and whether rubric parsing is Type-3-safe.
+    4. Emit one JSON object matching chomsky_classification_v1. No narrative
+       outside that JSON except a short "witnesses" appendix listing file paths
+       and CFG facts you used.
+    Be conservative: if the code can spawn subprocesses or grow unbounded journals,
+    classify the envelope at least as Type-0 unless a proved finite abstraction
+    is referenced.
+  tools:
+    - type: agent_toolset_20260401
+  outputs_to: paperbench/chomsky/contracts/
+
+consumer:
+  name: Chomsky V&V verifier (consumer contract)
+  role: consumer
+  description: >-
+    Consumes chomsky_classification_v1 from the producer and discharges
+    verification (model checking / structural checks) versus validation
+    (empirical probes, test obligations) appropriate to the declared class.
+  model: claude-sonnet-4-6
+  system: |-
+    You are the Chomsky verifier and validation agent for frontier-evals PaperBench.
+    Inputs: (1) producer JSON chomsky_classification_v1, (2) optional probe cell
+    records if present, (3) PaperBench stage artifacts (submission tree, executed
+    submission logs, judge outputs).
+    Obligations by class:
+    - Type-3: verify finite-state properties; require schema validators between
+      handoffs; forbid undeclared back-edges in certified control paths.
+    - Type-2: verify bounded pushdown depth counters; recommend SPIN/Promela or
+      equivalent on an abstracted skeleton; check demotion conditions if back-edge
+      rate collapses.
+    - Type-1: check linear workspace scaling vs trace length for transcript-heavy
+      paths.
+    - Type-0: do not claim decidability of full semantics; discharge testing,
+      MC/DC-style coverage on critical parsers, and non-LLM certifiers for safety
+      predicates; run retrieval-swap style ablations only when retrieval is claimed.
+    Output: verification_report_v1 and validation_report_v1 JSON with PASS/FAIL
+    per mechanical check, file:line evidence, and explicit demotion if refutation
+    conditions fire. Align checklist names with peer_review/REVIEW_RUBRIC.md style
+    where applicable.
+  tools:
+    - type: agent_toolset_20260401
+  reads_from: paperbench/chomsky/contracts/
+
+probes:
+  suite: P1_P6
+  purpose: >-
+    Empirically falsify or support the static class: pumping, balanced depth,
+    cross-serial, workspace linearity, retrieval swap, copy-language boundary.
+  bind_to_paperbench:
+    rollout_trace_log: agent_rollout
+    reproduce_metrics: reproduction
+    judge_transcript: grading
+
+orchestration:
+  repo_tasks:
+    - add_package: paperbench/chomsky/
+    - wire_hooks:
+        after_solver_import: run_field_analysis_on_solver
+        before_judge: assert_contract_compatible_with_rubric_parser
+
+build:
+  tool: uv
+  root: project/paperbench
+  metadata:
+    syllabus_ref: /Users/sweeden/Desktop/SysMLEng/13_AI Frameworks/AI Frameworks.pdf
+    related_chomsky_repo: /Users/sweeden/agentic_chomsky_formalization

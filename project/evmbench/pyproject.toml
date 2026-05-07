@@ -18,7 +18,7 @@ dependencies = [
     "blobfile>=3.0.0",
     "tiktoken>=0.9.0",
     "python-dateutil>=2.9.0",
-    "structlog>=25.1.0",
+    "structlog>=25.5.0",
     "matplotlib>=3.10.0",
     "chz",
     "nanoeval",
@@ -26,6 +26,7 @@ dependencies = [
     "alcatraz",
     "preparedness-turn-completer",
     "compatibility_api",
+    "chomsky_vv",
     "openai>=1.97.0",
 ]
 
@@ -53,6 +54,7 @@ nanoeval_alcatraz = { path = "../common/nanoeval_alcatraz", editable = true }
 alcatraz = { path = "../common/alcatraz", editable = true }
 preparedness_turn_completer = { path = "../common/preparedness_turn_completer", editable = true }
 compatibility_api = { path = "../common/compatibility_api", editable = true }
+chomsky_vv = { path = "../common/chomsky_vv", editable = true }
 
 [tool.ruff]
 extend = "../../pyproject.toml"

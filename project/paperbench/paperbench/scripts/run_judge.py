@@ -7,6 +7,7 @@ import structlog.stdlib
 from preparedness_turn_completer.turn_completer import TurnCompleter
 
 import chz
+from paperbench.chomsky.gate import GateMode, run_rollout_to_grading_gate
 from paperbench.grade import JudgeOutput, run_judge
 from paperbench.judge.token_usage import get_total_token_usage
 from paperbench.utils import get_timestamp
@@ -40,6 +41,24 @@ class RunJudgeCliArgs:
             "OpenAICompletionsTurnCompleter.Config"
         ),
     )
+    chomsky_gate: Literal["off", "warn", "block"] = chz.field(
+        default="off",
+        doc=(
+            "Run the Chomsky V&V rollout→grading gate before judging. "
+            "'block' refuses to grade if the PaperBench Monitor reports a "
+            "violation or the probe harness refutes the agent's declared "
+            "Chomsky class; 'warn' records the verdict but proceeds; "
+            "'off' (default) skips the gate."
+        ),
+    )
+    chomsky_agent_id: str = chz.field(
+        default="pb.basicagent",
+        doc=(
+            "Agent identifier whose chomsky_classification_v1 contract is "
+            "discharged by the gate. Must be registered in "
+            "paperbench.chomsky.contracts."
+        ),
+    )
 
 
 async def main(
@@ -51,7 +70,31 @@ async def main(
     code_only: bool,
     completer_config: TurnCompleter.Config | None = None,
     resources_provided: bool = False,
+    chomsky_gate: str = "off",
+    chomsky_agent_id: str = "pb.basicagent",
 ) -> None:
+    gate_mode = GateMode(chomsky_gate)
+    if gate_mode != GateMode.OFF:
+        gate_result = await run_rollout_to_grading_gate(
+            submission_path=submission_path,
+            paper_id=paper_id,
+            agent_id=chomsky_agent_id,
+            mode=gate_mode,
+            out_dir=out_dir,
+        )
+        if not gate_result.proceed:
+            logger.error(
+                "Chomsky gate refused grading",
+                reason=gate_result.reason,
+                log_file=str(gate_result.log_file) if gate_result.log_file else None,
+            )
+            raise RuntimeError(f"chomsky gate blocked: {gate_result.reason}")
+        logger.info(
+            "Chomsky gate passed",
+            mode=gate_mode.value,
+            reason=gate_result.reason,
+        )
+
     # Judge the submission
     graded_task_tree = await run_judge(
         submission_path=submission_path,
@@ -110,6 +153,8 @@ async def _main_from_cli(args: RunJudgeCliArgs) -> None:
         code_only=args.code_only,
         completer_config=completer_config,
         resources_provided=args.resources_provided,
+        chomsky_gate=args.chomsky_gate,
+        chomsky_agent_id=args.chomsky_agent_id,
     )
 
 

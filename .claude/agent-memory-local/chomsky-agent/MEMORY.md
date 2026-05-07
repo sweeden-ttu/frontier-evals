@@ -1,0 +1,1 @@
+- [frontier-evals layout](project_layout.md) — Three-benchmark layout (paperbench, swelancer, evmbench) and the agent / solver / judge surfaces that Chomsky classification targets.
