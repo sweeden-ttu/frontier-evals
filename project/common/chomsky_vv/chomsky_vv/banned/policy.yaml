@@ -1,0 +1,126 @@
+# chomsky_vv banned-token policy (canonical defaults).
+#
+# This YAML is the single source of truth read by the V&V probe, the
+# grader penalty hook, the HF logits processor, and the RL reward
+# shaper. Override per-project by passing --policy /path/to/policy.yaml
+# to `chomsky-banned`, or by setting the env var CHOMSKY_BANNED_POLICY.
+#
+# ---------------------------------------------------------------------
+# Pre-commit integration. Two equivalent forms — pick one and paste:
+#
+# (A) Local-system hook (no external repo). Add to .pre-commit-config.yaml:
+#
+#   - repo: local
+#     hooks:
+#       - id: chomsky-banned
+#         name: chomsky-banned scan
+#         entry: chomsky-banned scan --exit-nonzero-on-hit .
+#         language: system
+#         pass_filenames: false
+#         types_or: [python, markdown, yaml, json, text]
+#
+# (B) Per-file invocation (lets pre-commit pass changed files):
+#
+#   - repo: local
+#     hooks:
+#       - id: chomsky-banned
+#         name: chomsky-banned check
+#         entry: chomsky-banned check
+#         language: system
+#         pass_filenames: true
+#
+# Either form requires `pip install -e <chomsky_vv-path>` (or its wheel)
+# in the same virtualenv that pre-commit uses.
+#
+# ---------------------------------------------------------------------
+# Match kinds:
+#   word    : `\b<tok>\b` case-insensitive. `\b` treats `_` as a word
+#             char so `train_test_split`, `pretrain`, `pytest` do NOT
+#             match.
+#   literal : `(?<![A-Za-z0-9_])<tok>(?![A-Za-z0-9_])` case-insensitive.
+#             Use for tokens with embedded underscores (e.g. API_KEY).
+#   domain  : `(?<![A-Za-z0-9.])<tok>(?![A-Za-z0-9])` case-insensitive.
+#             Use for hostnames such as example.com.
+#
+# Severity meanings:
+#   error   : blocks the run via MonitorCertifierProbe.
+#   warn    : reported but does not block.
+#   info    : surfaced for diagnostics only.
+
+tokens:
+  - token: mock
+    severity: error
+    match_kind: word
+    weight: 1.0
+  - token: dummy
+    severity: error
+    match_kind: word
+    weight: 1.0
+  - token: synthetic
+    severity: error
+    match_kind: word
+    weight: 1.0
+  - token: test
+    severity: error
+    match_kind: word
+    weight: 1.0
+  - token: train
+    severity: error
+    match_kind: word
+    weight: 1.0
+  - token: foobar
+    severity: error
+    match_kind: word
+    weight: 1.0
+  - token: example.com
+    severity: error
+    match_kind: domain
+    weight: 1.0
+  - token: API_KEY
+    severity: error
+    match_kind: literal
+    weight: 1.0
+  - token: secret
+    severity: error
+    match_kind: word
+    weight: 1.0
+  - token: password
+    severity: error
+    match_kind: word
+    weight: 1.0
+
+# Identifiers/words exempted from enforcement after a candidate hit.
+# `dummy` is allowlisted by default so the mle-bench "dummy" agent id
+# keeps working; remove it locally to enforce the ban project-wide.
+allowlist_identifiers:
+  - train_test_split
+  - pytest
+  - unittest
+  - latest
+  - contest
+  - attest
+  - attestation
+  - dummy
+  - ML_TEST
+  - pretrain
+  - retrain
+  - ablation_test
+  - dev_test_split
+
+# Per-file-extension overrides. Empty by default. Use to relax or
+# tighten enforcement for, e.g., `.md` documentation files.
+per_extension_overrides: {}
+
+# Per-token weight overrides (key: token, value: float). Empty by
+# default; populated values take precedence over BannedToken.weight.
+weights: {}
+
+# Numeric punishment schedule (defaults — overridable):
+# grader_score_scale: divisor for the grader penalty (delta = -sum(weights*sev) / scale).
+# logits_soft_penalty: additive logit penalty in soft mode.
+# logits_hard_mode: if true, banned token logits are set to -inf.
+# rl_lambda: multiplier on the RL reward penalty (reward -= lambda * weighted_hits).
+grader_score_scale: 10.0
+logits_soft_penalty: -50.0
+logits_hard_mode: false
+rl_lambda: 1.0

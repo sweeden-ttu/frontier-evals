@@ -1,20 +1,36 @@
 [project]
 name = "chomsky_vv"
 version = "0.1.0"
-dependencies = ["pydantic>=2.7"]
+dependencies = [
+    "pydantic>=2.7",
+    "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+training = [
+    "transformers>=4.40",
+    "torch>=2.2",
+]
+cli = [
+    "rich>=13",
+]
+
+[project.scripts]
+chomsky-banned = "chomsky_vv.banned.cli:main"
 
 [dependency-groups]
 dev = [
     "mypy>=1.15.0",
     "pytest>=8.0",
     "ruff>=0.11.7",
+    "types-pyyaml>=6",
 ]
 
 [tool.setuptools]
 packages = { find = { include = ["chomsky_vv", "chomsky_vv.*"] } }
 
 [tool.setuptools.package-data]
-chomsky_vv = ["py.typed"]
+chomsky_vv = ["py.typed", "banned/policy.yaml"]
 
 [build-system]
 requires = ["setuptools<78.0.0", "wheel"]
