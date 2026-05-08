@@ -25,7 +25,12 @@ from chomsky_vv.banned.policy import (
     default_policy,
     load_policy,
 )
-from chomsky_vv.banned.reward import banned_reward_penalty
+from chomsky_vv.banned.reward import (
+    POSITIVE_REWARD_TERMS,
+    banned_reward_penalty,
+    net_reward_adjustment,
+    positive_scheme_reward,
+)
 
 __all__ = [
     "BannedToken",
@@ -33,10 +38,13 @@ __all__ = [
     "BannedTokenMatcher",
     "BannedTokenPolicy",
     "Hit",
+    "POSITIVE_REWARD_TERMS",
     "apply_to_score",
     "banned_reward_penalty",
     "compute_penalty",
     "default_policy",
     "load_policy",
+    "net_reward_adjustment",
     "penalty_to_score_delta",
+    "positive_scheme_reward",
 ]

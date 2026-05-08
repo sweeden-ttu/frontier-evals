@@ -7,12 +7,15 @@ from chomsky_vv.banned import (
     BannedTokenMatcher,
     BannedTokenPolicy,
     Hit,
+    POSITIVE_REWARD_TERMS,
     apply_to_score,
     banned_reward_penalty,
     compute_penalty,
     default_policy,
     load_policy,
+    net_reward_adjustment,
     penalty_to_score_delta,
+    positive_scheme_reward,
 )
 from chomsky_vv.harness import ProbeHarness
 from chomsky_vv.recorder import TraceRecorder
@@ -43,6 +46,7 @@ __all__ = [
     "MemoryHypothesis",
     "MonitorViolation",
     "MonitorViolationReport",
+    "POSITIVE_REWARD_TERMS",
     "ProbeHarness",
     "ProbeResult",
     "ProbeVerdict",
@@ -58,5 +62,7 @@ __all__ = [
     "compute_penalty",
     "default_policy",
     "load_policy",
+    "net_reward_adjustment",
     "penalty_to_score_delta",
+    "positive_scheme_reward",
 ]
