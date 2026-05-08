@@ -48,7 +48,7 @@ def test_alphabet_scan_in_order() -> None:
 
 def test_recorder_records_and_round_trips_jsonl(tmp_path) -> None:
     a = _abc_alphabet()
-    rec = TraceRecorder(agent_id="pb.test", run_id="r1", alphabet=a)
+    rec = TraceRecorder(agent_id="harness.py", run_id="r1", alphabet=a)
     rec.record("open", payload="(")
     rec.record("bash", payload="BASH")
     rec.record("close", payload=")")
@@ -62,7 +62,7 @@ def test_recorder_records_and_round_trips_jsonl(tmp_path) -> None:
 
 def test_recorder_record_text_uses_alphabet() -> None:
     a = _abc_alphabet()
-    rec = TraceRecorder(agent_id="pb.test", run_id="r2", alphabet=a)
+    rec = TraceRecorder(agent_id="alphabet.py", run_id="r2", alphabet=a)
     rec.record_text("ignored (BASH) ignored (BASH)")
     tokens = [t.token for t in rec.trace().tokens]
     assert tokens == ["open", "bash", "close", "open", "bash", "close"]
@@ -70,6 +70,6 @@ def test_recorder_record_text_uses_alphabet() -> None:
 
 def test_recorder_rejects_unknown_token() -> None:
     a = _abc_alphabet()
-    rec = TraceRecorder(agent_id="pb.test", run_id="r3", alphabet=a)
+    rec = TraceRecorder(agent_id="harness.py", run_id="r3", alphabet=a)
     with pytest.raises(ValueError, match="not in alphabet"):
         rec.record("unknown")

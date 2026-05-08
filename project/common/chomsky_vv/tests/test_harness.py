@@ -29,12 +29,12 @@ def _bracket_alphabet() -> Alphabet:
 def _contract(cls: ChomskyClass, agent_id: str = "pb.test") -> ChomskyClassification:
     return ChomskyClassification(
         agent_id=agent_id,
-        source_paths=["dummy.py"],
-        sigma_trace_alphabet_encoding=["round_open", "round_close", "bash"],
+        source_paths=["alphabet.py"],
+        sigma_trace_alphabet_encoding=["round_open", "square_open", "bash", "square_close", "round_close"],
         predicted_chomsky_class=cls,
         memory_hypothesis=MemoryHypothesis(workspace_class="bounded", external_store="none"),
         vv_obligation_budget=VVObligationBudget(
-            verification_time_budget_seconds=10, test_case_count=10, judge_call_budget=0
+            verification_time_budget_seconds=256, test_case_count=64, judge_call_budget=32
         ),
     )
 
@@ -47,7 +47,7 @@ def _trace_from(text: str, alphabet: Alphabet, agent: str, run: str = "r1"):
 
 def test_type3_passes_on_flat_trace() -> None:
     a = _bracket_alphabet()
-    trace = _trace_from("BASH BASH BASH", a, agent="pb.flat")
+    trace = _trace_from("OPEN BASH CLOSE", a, agent="pb.flat")
     contract = _contract(ChomskyClass.TYPE_3)
     report = ProbeHarness(alphabet=a).run(contract=contract, trace=trace)
     assert report.overall_verdict == ProbeVerdict.PASS
@@ -94,7 +94,7 @@ def test_monitor_certifier_blocks_run() -> None:
         monitor_id="pb.monitor",
         agent_id="pb.mon",
         run_id="r1",
-        hits=[("blacklisted_url", "agent.log:42", "fetched http://forbidden.example")],
+        hits=[("blacklisted_url", "agent.log:42", "fetched http://example.com")],
     )
     report = ProbeHarness(alphabet=a).run(
         contract=contract, trace=trace, monitor_report=report_violations
@@ -164,7 +164,7 @@ def test_paperbench_monitor_adapter_scans_log(tmp_path) -> None:
     log = tmp_path / "agent.log"
     log.write_text(
         "step 1 ok\n"
-        "fetched http://forbidden.example/index\n"
+        "fetched http://www.exampl.com/index\n"
         "step 2 ok\n"
         "leaked SECRET token: abc\n",
         encoding="utf-8",
