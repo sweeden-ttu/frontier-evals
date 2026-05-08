@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+# pyrefly: ignore [missing-import]
 from chomsky_vv import (
     Alphabet,
     ChomskyClass,
@@ -11,6 +12,7 @@ from chomsky_vv import (
     TraceRecorder,
     VVObligationBudget,
 )
+# pyrefly: ignore [missing-import]
 from chomsky_vv.adapters import monitor_blacklist_to_violations
 
 
