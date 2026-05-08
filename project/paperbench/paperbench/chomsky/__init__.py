@@ -18,6 +18,11 @@ Producer/consumer wiring (per ``frontier.yaml``):
 """
 
 from paperbench.chomsky.alphabet import paperbench_default_alphabet
+from paperbench.chomsky.banned_hook import (
+    BannedTokenJudgeResult,
+    merge_monitor_reports,
+    run_banned_token_judge_post_hook,
+)
 from paperbench.chomsky.contracts import (
     PaperBenchAgentId,
     classification_for,
@@ -32,13 +37,16 @@ from paperbench.chomsky.gate import (
 from paperbench.chomsky.monitor_bridge import monitor_result_to_violation_report
 
 __all__ = [
+    "BannedTokenJudgeResult",
     "GateMode",
     "GateResult",
     "PaperBenchAgentId",
     "classification_for",
     "default_classifications",
     "find_agent_log",
+    "merge_monitor_reports",
     "monitor_result_to_violation_report",
     "paperbench_default_alphabet",
+    "run_banned_token_judge_post_hook",
     "run_rollout_to_grading_gate",
 ]
