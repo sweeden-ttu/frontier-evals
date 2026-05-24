@@ -1,0 +1,76 @@
+{
+  "variant": "parallel_multiwell_loader",
+  "approach": "Parallel IO + geology surfaces",
+  "base_paper": {
+    "role": "primary_experiment_descriptor",
+    "title": "Dask: Parallel Computation with Blocked algorithms and Task Scheduling",
+    "authors": "Rocklin",
+    "year": 2015,
+    "venue": "SciPy proceedings",
+    "url": "https://conference.scipy.org/proceedings/scipy2015/matthew_rocklin.html",
+    "claims": [
+      "Parallel blocked IO scales multi-well CSV ingestion beyond single-threaded loaders.",
+      "Worker count and on-disk cache are ablatable throughput\u2013memory tradeoffs.",
+      "Geology surface columns add Type-1 feature materialization cost testable via on/off ablation."
+    ],
+    "ablation_sections": [
+      "\u00a72 task graph",
+      "\u00a73 scheduling"
+    ],
+    "supporting": []
+  },
+  "trace_theory_paper": {
+    "paperbench_id": "agent-tracing",
+    "title": "Agentic Programming as Formal Automata: A Chomsky-Hierarchy View of Tool-Using LLM Agents",
+    "authors": "Scott Weeden",
+    "bundle_path": "data/papers/agent-tracing",
+    "role": "trace_language_audit_and_agent_implementation",
+    "sections": [
+      "sec/7 Bayesian loop",
+      "sec/4 evaluation audit"
+    ]
+  },
+  "agent_implementation": {
+    "trace_language_csv": "traces/preprocessing/parallel_multiwell_loader/trace_language.csv",
+    "trace_language_csv_absolute": "/lustre/work/sweeden/agent-tracing/examples/rogii/traces/preprocessing/parallel_multiwell_loader/trace_language.csv",
+    "resource_envelope_rows": "2-21",
+    "governance_bootstrap_rows": "22-26",
+    "chomsky_audit": "sec/4 evaluation audit protocol (Type-3 consumer bounds)",
+    "orchestrator": "paperbench.trace_pipeline.orchestrator.TracePipelineOrchestrator"
+  },
+  "experiment": {
+    "hypothesis": "Parallel IO + geology surfaces improves competition RMSE (post-PS) vs shared baseline under nested GroupKFold, as motivated by Rocklin (2015).",
+    "statistical_framework": "statistical_framework.md",
+    "ablation_plan": "ablation_plan.json",
+    "subdivision_manifest": "subdivision_manifest.json",
+    "primary_metric": "rmse_post_ps",
+    "smre": "mean_rmse_plus_std_across_folds",
+    "ablation_factors": [
+      {
+        "id": "io_workers",
+        "factor": "parallel_workers",
+        "levels": [
+          "4",
+          "8",
+          "16"
+        ]
+      },
+      {
+        "id": "surface_cols",
+        "factor": "geology_surfaces",
+        "levels": [
+          "off",
+          "on"
+        ]
+      },
+      {
+        "id": "loader_cache",
+        "factor": "cache",
+        "levels": [
+          "off",
+          "on"
+        ]
+      }
+    ]
+  }
+}

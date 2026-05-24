@@ -1,0 +1,84 @@
+{
+  "variant": "formation_plane_spatial",
+  "approach": "Drilling geometry + formation KNN",
+  "base_paper": {
+    "role": "primary_experiment_descriptor",
+    "title": "Nearest Neighbor Pattern Classification",
+    "authors": "Cover, Hart",
+    "year": 1967,
+    "venue": "IEEE Trans. Information Theory",
+    "doi": "10.1109/TIT.1967.1053964",
+    "url": "https://ieeexplore.ieee.org/document/1053964",
+    "claims": [
+      "k-NN risk bounds motivate formation-label propagation from spatial neighbors in TVD/MD space.",
+      "Drilling geometry features encode directional survey context for plane-aware lithology.",
+      "Formation plane fit (off/on) ablates explicit structural surface vs pure neighbor voting."
+    ],
+    "ablation_sections": [
+      "\u00a71 k-NN error bounds",
+      "\u00a72 finite-sample behavior"
+    ],
+    "supporting": [
+      {
+        "title": "A Two-Dimensional Interpolation Function for Irregularly-Spaced Data",
+        "authors": "Shepard",
+        "year": 1968,
+        "venue": "ACM",
+        "role": "Formation surface / plane interpolation analogue"
+      }
+    ]
+  },
+  "trace_theory_paper": {
+    "paperbench_id": "agent-tracing",
+    "title": "Agentic Programming as Formal Automata: A Chomsky-Hierarchy View of Tool-Using LLM Agents",
+    "authors": "Scott Weeden",
+    "bundle_path": "data/papers/agent-tracing",
+    "role": "trace_language_audit_and_agent_implementation",
+    "sections": [
+      "sec/3 Type-0 envelope"
+    ]
+  },
+  "agent_implementation": {
+    "trace_language_csv": "traces/preprocessing/formation_plane_spatial/trace_language.csv",
+    "trace_language_csv_absolute": "/lustre/work/sweeden/agent-tracing/examples/rogii/traces/preprocessing/formation_plane_spatial/trace_language.csv",
+    "resource_envelope_rows": "2-21",
+    "governance_bootstrap_rows": "22-26",
+    "chomsky_audit": "sec/4 evaluation audit protocol (Type-3 consumer bounds)",
+    "orchestrator": "paperbench.trace_pipeline.orchestrator.TracePipelineOrchestrator"
+  },
+  "experiment": {
+    "hypothesis": "Drilling geometry + formation KNN improves competition RMSE (post-PS) vs shared baseline under nested GroupKFold, as motivated by Cover, Hart (1967).",
+    "statistical_framework": "statistical_framework.md",
+    "ablation_plan": "ablation_plan.json",
+    "subdivision_manifest": "subdivision_manifest.json",
+    "primary_metric": "rmse_post_ps",
+    "smre": "mean_rmse_plus_std_across_folds",
+    "ablation_factors": [
+      {
+        "id": "knn_k",
+        "factor": "formation_knn",
+        "levels": [
+          "3",
+          "5",
+          "11"
+        ]
+      },
+      {
+        "id": "geometry_feats",
+        "factor": "drilling_geometry",
+        "levels": [
+          "off",
+          "on"
+        ]
+      },
+      {
+        "id": "plane_fit",
+        "factor": "formation_plane",
+        "levels": [
+          "off",
+          "on"
+        ]
+      }
+    ]
+  }
+}

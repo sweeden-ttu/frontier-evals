@@ -1,0 +1,83 @@
+{
+  "variant": "robust_scale_log1p",
+  "approach": "RobustScaler + log1p target",
+  "base_paper": {
+    "role": "primary_experiment_descriptor",
+    "title": "Robust Statistics: The Approach Based on Influence Functions",
+    "authors": "Hampel, Ronchetti, Rousseuw, Stahel",
+    "year": 1986,
+    "venue": "Wiley",
+    "doi": "10.1002/9781118186435",
+    "url": "https://onlinelibrary.wiley.com/doi/book/10.1002/9781118186435",
+    "claims": [
+      "Robust location/scale estimators reduce outlier sensitivity vs ordinary standardization.",
+      "log1p target transform stabilizes skewed well-log regression residuals.",
+      "Inverse transform at predict time is an ablatable factor coupling train and inference stacks."
+    ],
+    "ablation_sections": [
+      "Ch. 2 influence functions",
+      "Ch. 5 M-estimators"
+    ],
+    "supporting": [
+      {
+        "title": "Scikit-learn: Machine Learning in Python",
+        "authors": "Pedregosa et al.",
+        "year": 2011,
+        "venue": "JMLR",
+        "role": "RobustScaler implementation reference"
+      }
+    ]
+  },
+  "trace_theory_paper": {
+    "paperbench_id": "agent-tracing",
+    "title": "Agentic Programming as Formal Automata: A Chomsky-Hierarchy View of Tool-Using LLM Agents",
+    "authors": "Scott Weeden",
+    "bundle_path": "data/papers/agent-tracing",
+    "role": "trace_language_audit_and_agent_implementation",
+    "sections": [
+      "sec/3 Type-1 linear transcript"
+    ]
+  },
+  "agent_implementation": {
+    "trace_language_csv": "traces/preprocessing/robust_scale_log1p/trace_language.csv",
+    "trace_language_csv_absolute": "/lustre/work/sweeden/agent-tracing/examples/rogii/traces/preprocessing/robust_scale_log1p/trace_language.csv",
+    "resource_envelope_rows": "2-21",
+    "governance_bootstrap_rows": "22-26",
+    "chomsky_audit": "sec/4 evaluation audit protocol (Type-3 consumer bounds)",
+    "orchestrator": "paperbench.trace_pipeline.orchestrator.TracePipelineOrchestrator"
+  },
+  "experiment": {
+    "hypothesis": "RobustScaler + log1p target improves competition RMSE (post-PS) vs shared baseline under nested GroupKFold, as motivated by Hampel, Ronchetti, Rousseuw, Stahel (1986).",
+    "statistical_framework": "statistical_framework.md",
+    "ablation_plan": "ablation_plan.json",
+    "subdivision_manifest": "subdivision_manifest.json",
+    "primary_metric": "rmse_post_ps",
+    "smre": "mean_rmse_plus_std_across_folds",
+    "ablation_factors": [
+      {
+        "id": "log1p_target",
+        "factor": "target_transform",
+        "levels": [
+          "off",
+          "on"
+        ]
+      },
+      {
+        "id": "robust_features",
+        "factor": "feature_scaler",
+        "levels": [
+          "standard",
+          "robust"
+        ]
+      },
+      {
+        "id": "inverse_at_predict",
+        "factor": "inverse_transform",
+        "levels": [
+          "off",
+          "on"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "variant": "baseline_column_transformer",
+  "approach": "ColumnTransformer + LightGBM baseline",
+  "branch": "trace/baseline-column-transformer",
+  "github_pr": "17",
+  "base_paper": {
+    "role": "model_experiment_descriptor",
+    "id": "ke2017_lightgbm",
+    "title": "LightGBM: A Highly Efficient Gradient Boosting Decision Tree",
+    "authors": "Ke, Meng, Finley, Wang, Chen, Ma, Ye, Liu",
+    "short_authors": "Ke et al.",
+    "year": 2017,
+    "venue": "NeurIPS",
+    "doi": "10.5555/3294996.3295074",
+    "url": "https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree",
+    "claims": [
+      "Histogram-based GBDT improves tabular regression speed and accuracy vs level-wise boosting.",
+      "Leaf-wise growth with regularization supports strong baselines on heterogeneous numeric features.",
+      "Pairs with heterogeneous column preprocessing (ColumnTransformer) on tabular well-log features."
+    ],
+    "ablation_sections": [
+      "\u00a73 histogram algorithm",
+      "\u00a74 experiments on dense numeric features"
+    ],
+    "trace_tokens": [
+      "set_objective_regression",
+      "set_metric_rmse",
+      "log_best_iteration",
+      "train_with_seed_42"
+    ]
+  },
+  "trace_theory_paper": {
+    "paperbench_id": "agent-tracing",
+    "title": "Agentic Programming as Formal Automata: A Chomsky-Hierarchy View of Tool-Using LLM Agents",
+    "authors": "Scott Weeden",
+    "bundle_path": "data/papers/agent-tracing",
+    "role": "trace_language_audit_and_agent_implementation",
+    "sections": [
+      "sec/2 agent schemata",
+      "sec/4 evaluation audit protocol"
+    ]
+  },
+  "base_papers": [
+    {
+      "id": "ke2017_lightgbm",
+      "role": "model_experiment_descriptor",
+      "title": "LightGBM: A Highly Efficient Gradient Boosting Decision Tree",
+      "authors": "Ke, Meng, Finley, Wang, Chen, Ma, Ye, Liu",
+      "short_authors": "Ke et al.",
+      "year": 2017,
+      "venue": "NeurIPS",
+      "doi": "10.5555/3294996.3295074",
+      "url": "https://papers.nips.cc/paper/6907-lightgbm-a-highly-efficient-gradient-boosting-decision-tree",
+      "claims": [
+        "Histogram-based GBDT improves tabular regression speed and accuracy vs level-wise boosting.",
+        "Leaf-wise growth with regularization supports strong baselines on heterogeneous numeric features.",
+        "Pairs with heterogeneous column preprocessing (ColumnTransformer) on tabular well-log features."
+      ],
+      "ablation_sections": [
+        "\u00a73 histogram algorithm",
+        "\u00a74 experiments on dense numeric features"
+      ],
+      "trace_tokens": [
+        "set_objective_regression",
+        "set_metric_rmse",
+        "log_best_iteration",
+        "train_with_seed_42"
+      ]
+    },
+    {
+      "id": "pedregosa2011_sklearn",
+      "role": "preprocessing_experiment_descriptor",
+      "title": "Scikit-learn: Machine Learning in Python",
+      "authors": "Pedregosa, Varoquaux, Gramfort, Michel, Thirion, Grisel, Blondel, Prettenhofer, Weiss, Dubourg, Vanderplas, Passos, Cournapeau, Brucher, Perrot, Duchesnay",
+      "short_authors": "Pedregosa et al.",
+      "year": 2011,
+      "venue": "JMLR",
+      "doi": "10.5555/1953048.2029494",
+      "url": "https://jmlr.org/papers/v12/pedregosa11a.html",
+      "claims": [
+        "ColumnTransformer applies disjoint transformers to heterogeneous column blocks.",
+        "Pipeline compose chains preprocessing and estimator for leak-safe CV.",
+        "numeric_scaler ablation (standard vs robust) maps to sklearn preprocessor choice."
+      ],
+      "ablation_sections": [
+        "\u00a72 unified API",
+        "ColumnTransformer / Pipeline compose"
+      ],
+      "trace_tokens": [
+        "build_numeric_pipeline",
+        "build_lowcard_pipeline",
+        "build_highcard_pipeline",
+        "assemble_column_transformer"
+      ]
+    }
+  ],
+  "agent_implementation": {
+    "trace_language_csv": "traces/preprocessing/baseline_column_transformer/trace_language.csv",
+    "trace_language_csv_absolute": "/lustre/work/sweeden/agent-tracing/examples/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv",
+    "resource_envelope_rows": "2-21",
+    "governance_bootstrap_rows": "22-26",
+    "chomsky_audit": "sec/4 evaluation audit protocol (Type-3 consumer bounds)",
+    "orchestrator": "paperbench.trace_pipeline.orchestrator.TracePipelineOrchestrator"
+  },
+  "experiment": {
+    "hypothesis": "ColumnTransformer + LightGBM baseline improves competition RMSE (post-PS) vs shared baseline under nested GroupKFold, as motivated by Ke et al. (2017), Pedregosa et al. (2011).",
+    "statistical_framework": "statistical_framework.md",
+    "ablation_plan": "ablation_plan.json",
+    "subdivision_manifest": "subdivision_manifest.json",
+    "primary_metric": "rmse_post_ps",
+    "smre": "mean_rmse_plus_std_across_folds",
+    "ablation_factors": [
+      {
+        "id": "target_log1p",
+        "factor": "target_transform",
+        "levels": [
+          "none",
+          "log1p"
+        ]
+      },
+      {
+        "id": "numeric_scaler",
+        "factor": "preprocessor",
+        "levels": [
+          "standard",
+          "robust"
+        ]
+      },
+      {
+        "id": "rolling_window",
+        "factor": "feature_window",
+        "levels": [
+          "32",
+          "64",
+          "128"
+        ]
+      }
+    ]
+  }
+}

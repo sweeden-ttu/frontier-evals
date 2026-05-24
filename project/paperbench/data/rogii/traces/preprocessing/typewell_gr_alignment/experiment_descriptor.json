@@ -1,0 +1,84 @@
+{
+  "variant": "typewell_gr_alignment",
+  "approach": "GR/typewell alignment features",
+  "base_paper": {
+    "role": "primary_experiment_descriptor",
+    "title": "Dynamic Programming Algorithm Optimization for Spoken Word Recognition",
+    "authors": "Sakoe, Chiba",
+    "year": 1978,
+    "venue": "IEEE Trans. Acoustics, Speech, and Signal Processing",
+    "doi": "10.1109/TASSP.1978.1163055",
+    "url": "https://ieeexplore.ieee.org/document/1163055",
+    "claims": [
+      "DTW aligns sequences with local warping\u2014applicable to depth-indexed GR/typewell curves.",
+      "Interpolation choice (linear vs PCHIP) changes tie-point smoothness and physics baseline RMSE.",
+      "Typewell alignment is an inductive bias ablation: off vs on tests geologic transfer value."
+    ],
+    "ablation_sections": [
+      "\u00a72 warping path",
+      "\u00a73 band constraints"
+    ],
+    "supporting": [
+      {
+        "title": "The Geological Interpretation of Well Logs",
+        "authors": "Rider, Kennedy",
+        "year": 2011,
+        "venue": "Whittles Publishing",
+        "role": "Typewell / gamma-ray correlation domain vocabulary"
+      }
+    ]
+  },
+  "trace_theory_paper": {
+    "paperbench_id": "agent-tracing",
+    "title": "Agentic Programming as Formal Automata: A Chomsky-Hierarchy View of Tool-Using LLM Agents",
+    "authors": "Scott Weeden",
+    "bundle_path": "data/papers/agent-tracing",
+    "role": "trace_language_audit_and_agent_implementation",
+    "sections": [
+      "sec/3 Type-2 stack",
+      "sec/7 R&D Bayesian loop"
+    ]
+  },
+  "agent_implementation": {
+    "trace_language_csv": "traces/preprocessing/typewell_gr_alignment/trace_language.csv",
+    "trace_language_csv_absolute": "/lustre/work/sweeden/agent-tracing/examples/rogii/traces/preprocessing/typewell_gr_alignment/trace_language.csv",
+    "resource_envelope_rows": "2-21",
+    "governance_bootstrap_rows": "22-26",
+    "chomsky_audit": "sec/4 evaluation audit protocol (Type-3 consumer bounds)",
+    "orchestrator": "paperbench.trace_pipeline.orchestrator.TracePipelineOrchestrator"
+  },
+  "experiment": {
+    "hypothesis": "GR/typewell alignment features improves competition RMSE (post-PS) vs shared baseline under nested GroupKFold, as motivated by Sakoe, Chiba (1978).",
+    "statistical_framework": "statistical_framework.md",
+    "ablation_plan": "ablation_plan.json",
+    "subdivision_manifest": "subdivision_manifest.json",
+    "primary_metric": "rmse_post_ps",
+    "smre": "mean_rmse_plus_std_across_folds",
+    "ablation_factors": [
+      {
+        "id": "gr_alignment",
+        "factor": "typewell_align",
+        "levels": [
+          "off",
+          "on"
+        ]
+      },
+      {
+        "id": "gr_interp",
+        "factor": "interpolator",
+        "levels": [
+          "linear",
+          "pchip"
+        ]
+      },
+      {
+        "id": "baseline_gr_rmse",
+        "factor": "physics_baseline",
+        "levels": [
+          "report",
+          "skip"
+        ]
+      }
+    ]
+  }
+}
