@@ -7,8 +7,9 @@ from pathlib import Path
 from typing import Any, Callable
 
 from paperbench.chomsky.producer_consumer import CANONICAL_HEADERS
+from paperbench.trace_pipeline.paths import resolve_rogii_root
 
-ROGII_ROOT = Path("/lustre/work/sweeden/rogii")
+ROGII_ROOT = resolve_rogii_root()
 
 
 @dataclass

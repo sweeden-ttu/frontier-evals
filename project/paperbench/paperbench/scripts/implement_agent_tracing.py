@@ -10,8 +10,7 @@ from pathlib import Path
 
 from paperbench.chomsky.hooks import analyze_trace_and_verify, run_field_analysis_on_solver
 from paperbench.chomsky.schema import contracts_dir
-
-ROGII_TRACES_ROOT = Path("/lustre/work/sweeden/rogii/traces/preprocessing")
+from paperbench.trace_pipeline.paths import resolve_trace_path
 VARIANTS = (
     "baseline_column_transformer",
     "typewell_gr_alignment",
@@ -26,7 +25,7 @@ def validate_all_traces() -> int:
     results = []
     failures = 0
     for variant in VARIANTS:
-        trace_path = ROGII_TRACES_ROOT / variant / "trace_language.csv"
+        trace_path = resolve_trace_path(variant)
         if not trace_path.exists():
             print(f"MISSING {trace_path}")
             failures += 1

@@ -4,13 +4,12 @@ import pytest
 
 from paperbench.chomsky import classify_trace_csv, validate_trace_language_csv
 from paperbench.chomsky.trace_csv import CANONICAL_HEADERS
+from paperbench.trace_pipeline.paths import resolve_trace_path
 
 
 @pytest.fixture
 def rogii_baseline() -> Path:
-    return Path(
-        "/lustre/work/sweeden/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv"
-    )
+    return resolve_trace_path("baseline_column_transformer")
 
 
 def test_canonical_header_count() -> None:
