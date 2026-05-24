@@ -1,0 +1,125 @@
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "requirements": "The agent-tracing paper core contributions have been reproduced as executable tooling and trace-language artifacts.",
+  "weight": 1,
+  "sub_tasks": [
+    {
+      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+      "requirements": "Trace language formalization is implemented as a machine-checkable CSV schema validator.",
+      "weight": 1,
+      "sub_tasks": [
+        {
+          "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+          "requirements": "A validator enforces the 20-column Rogii swim-lane header and rejects malformed headers.",
+          "weight": 2,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Data Processing & Preparation"
+        },
+        {
+          "id": "d4e5f6a7-b8c9-0123-def0-234567890123",
+          "requirements": "The validator enforces single-action rows (at most one non-empty cell per row after governance rows 2-4).",
+          "weight": 2,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Data Processing & Preparation"
+        },
+        {
+          "id": "e5f6a7b8-c9d0-1234-ef01-345678901234",
+          "requirements": "The validator checks pipeline closure (dependency-graph orchestrator reaches serialize/topological_order).",
+          "weight": 1,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Data Processing & Preparation"
+        }
+      ],
+      "task_category": null,
+      "finegrained_task_category": null
+    },
+    {
+      "id": "f6a7b8c9-d0e1-2345-f012-456789012345",
+      "requirements": "Chomsky hierarchy classifier and verifier are implemented per frontier.yaml smart contract.",
+      "weight": 1,
+      "sub_tasks": [
+        {
+          "id": "a7b8c9d0-e1f2-3456-0123-567890123456",
+          "requirements": "Classifier emits chomsky_classification_v1 JSON with agent_id, predicted_chomsky_class, sigma_trace_alphabet_encoding, structural_witnesses, and memory_hypothesis.",
+          "weight": 3,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Model Implementation"
+        },
+        {
+          "id": "b8c9d0e1-f2a3-4567-1234-678901234567",
+          "requirements": "Verifier emits verification_report_v1 with PASS/FAIL checks appropriate to the declared Chomsky class.",
+          "weight": 2,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Evaluation & Benchmarking"
+        },
+        {
+          "id": "c9d0e1f2-a3b4-5678-2345-789012345678",
+          "requirements": "Type-0 envelope detection flags subprocess/HTTP/CLI patterns (kaggle, sbatch, uv, curl) in trace cells.",
+          "weight": 1,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Model Implementation"
+        }
+      ],
+      "task_category": null,
+      "finegrained_task_category": null
+    },
+    {
+      "id": "d0e1f2a3-b4c5-6789-3456-890123456789",
+      "requirements": "Rogii preprocessing trace language variants are present and validate.",
+      "weight": 1,
+      "sub_tasks": [
+        {
+          "id": "e1f2a3b4-c5d6-7890-4567-901234567890",
+          "requirements": "All six preprocessing variants validate: baseline_column_transformer, typewell_gr_alignment, ps_point_leakage_aware, robust_scale_log1p, parallel_multiwell_loader, formation_plane_spatial.",
+          "weight": 4,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Dataset & DataLoaders"
+        },
+        {
+          "id": "f2a3b4c5-d6e7-8901-5678-012345678901",
+          "requirements": "Trace cells include CLI-for-agents commands (kaggle download, sbatch train, uv pip install) where training/submission steps occur.",
+          "weight": 2,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Environment & Infrastructure Setup"
+        }
+      ],
+      "task_category": null,
+      "finegrained_task_category": null
+    },
+    {
+      "id": "a3b4c5d6-e7f8-9012-6789-123456789012",
+      "requirements": "Evaluation audit protocol and PaperBench hooks are documented and runnable.",
+      "weight": 1,
+      "sub_tasks": [
+        {
+          "id": "b4c5d6e7-f8a9-0123-7890-234567890123",
+          "requirements": "reproduce.sh runs trace validation and Chomsky classification for all variants without manual steps.",
+          "weight": 2,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Environment & Infrastructure Setup"
+        },
+        {
+          "id": "c5d6e7f8-a9b0-1234-8901-345678901234",
+          "requirements": "README maps concrete implementation modules to agent schemata (control-state audit, memory audit, trace logging).",
+          "weight": 1,
+          "sub_tasks": [],
+          "task_category": "Code Development",
+          "finegrained_task_category": "Documentation & Reporting"
+        }
+      ],
+      "task_category": null,
+      "finegrained_task_category": null
+    }
+  ],
+  "task_category": null,
+  "finegrained_task_category": null
+}
