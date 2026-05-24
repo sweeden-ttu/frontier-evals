@@ -20,6 +20,28 @@ def resolve_rogii_root() -> Path:
     return _DEFAULT_HPCC_ROGII
 
 
+_DEFAULT_VARIANTS = (
+    "baseline_column_transformer",
+    "typewell_gr_alignment",
+    "ps_point_leakage_aware",
+    "robust_scale_log1p",
+    "parallel_multiwell_loader",
+    "formation_plane_spatial",
+)
+
+
+def discover_variants() -> tuple[str, ...]:
+    """Variants present under traces/preprocessing/, else bundled defaults."""
+    root = resolve_rogii_root() / "traces" / "preprocessing"
+    if root.is_dir():
+        found = sorted(
+            p.name for p in root.iterdir() if (p / "trace_language.csv").is_file()
+        )
+        if found:
+            return tuple(found)
+    return _DEFAULT_VARIANTS
+
+
 def resolve_trace_path(variant: str) -> Path:
     return (
         resolve_rogii_root()

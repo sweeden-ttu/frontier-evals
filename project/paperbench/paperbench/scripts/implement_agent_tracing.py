@@ -10,21 +10,15 @@ from pathlib import Path
 
 from paperbench.chomsky.hooks import analyze_trace_and_verify, run_field_analysis_on_solver
 from paperbench.chomsky.schema import contracts_dir
-from paperbench.trace_pipeline.paths import resolve_trace_path
-VARIANTS = (
-    "baseline_column_transformer",
-    "typewell_gr_alignment",
-    "ps_point_leakage_aware",
-    "robust_scale_log1p",
-    "parallel_multiwell_loader",
-    "formation_plane_spatial",
-)
+from paperbench.trace_pipeline.paths import discover_variants, resolve_trace_path
 
 
-def validate_all_traces() -> int:
+def validate_all_traces(*, variants: tuple[str, ...] | None = None) -> int:
+    if variants is None:
+        variants = discover_variants()
     results = []
     failures = 0
-    for variant in VARIANTS:
+    for variant in variants:
         trace_path = resolve_trace_path(variant)
         if not trace_path.exists():
             print(f"MISSING {trace_path}")
@@ -54,6 +48,12 @@ def analyze_dummy_solver() -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--variant",
+        action="append",
+        dest="variants",
+        help="Validate one variant (repeatable). Default: all discovered variants.",
+    )
+    parser.add_argument(
         "--validate-traces",
         action="store_true",
         help="Validate and classify all six Rogii preprocessing trace variants.",
@@ -71,7 +71,8 @@ def main() -> int:
 
     rc = 0
     if args.validate_traces:
-        rc = validate_all_traces()
+        selected = tuple(args.variants) if args.variants else None
+        rc = validate_all_traces(variants=selected)
     if args.analyze_dummy_solver:
         analyze_dummy_solver()
     return rc
