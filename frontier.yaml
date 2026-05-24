@@ -1,0 +1,67 @@
+architecture:
+  target_repo: .
+  primary_project: project/paperbench
+  rationale: >-
+    PaperBench implements a three-stage lifecycle (agent rollout, reproduction,
+    grading). The Chomsky layer classifies each agent by the trace language it
+    realizes and the smart contract (allowed I/O and memory) it can honor.
+
+integration:
+  paperbench_stages:
+    - id: agent_rollout
+      chomsky_gate: static_field_analysis_and_trace_schema_bind
+    - id: reproduction
+      chomsky_gate: deterministic_reexec_under_declared_memory_class
+    - id: grading
+      chomsky_gate: rubric_alignment_plus_judge_budget_check
+  paperbench_code_roots:
+    package: paperbench/
+    scripts:
+      - paperbench/scripts/run_agent.py
+      - paperbench/reproduce.py
+      - paperbench/scripts/run_judge.py
+      - paperbench/scripts/implement_agent_tracing.py
+  datasets:
+    papers_with_rubrics: project/paperbench/data
+    rogii_traces: /lustre/work/sweeden/rogii/traces/preprocessing
+  env:
+    paperbench_data_dir: PAPERBENCH_DATA_DIR
+
+smart_contract_model:
+  producer_emits:
+    schema: chomsky_classification_v1
+    predicted_chomsky_class_enum: [Type-3, Type-2, Type-1, Type-0]
+    fields:
+      - agent_id
+      - source_paths
+      - sigma_trace_alphabet_encoding
+      - predicted_chomsky_class
+      - structural_witnesses
+      - memory_hypothesis
+      - probe_plan_ref
+      - vv_obligation_budget
+  consumer_requires:
+    validates_against: producer_emits
+    chomsky_class: Type-3
+    on_fail: demote_class_or_reject_run
+  producer_consumer_binding:
+    rule: every producer swim lane must be immediately bounded by a Type-3 consumer
+    type3_consumers:
+      - schema-sentinel
+      - submission_validator
+    bound_token_prefix: type3_consumer_bound_
+    validate_module: paperbench.chomsky.trace_csv.validate_producer_type3_consumer_bounds
+  outputs:
+    - verification_report_v1
+    - validation_report_v1
+
+orchestration:
+  repo_tasks:
+  - add_package: paperbench/chomsky/
+  - wire_hooks:
+      after_solver_import: run_field_analysis_on_solver
+      before_judge: assert_contract_compatible_with_rubric_parser
+
+build:
+  tool: uv
+  root: project/paperbench
