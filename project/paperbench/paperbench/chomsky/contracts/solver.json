@@ -1,0 +1,16 @@
+{
+  "schema": "chomsky_classification_v1",
+  "agent_id": "solver",
+  "source_paths": [
+    "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/solvers/dummy/solver.py"
+  ],
+  "sigma_trace_alphabet_encoding": [],
+  "predicted_chomsky_class": "Type-0",
+  "structural_witnesses": [
+    "pattern '\\\\bopen\\\\s*\\\\(' in solver.py",
+    "async control flow (linear transcript over await steps)"
+  ],
+  "memory_hypothesis": "container subprocess + filesystem + network envelope",
+  "probe_plan_ref": null,
+  "vv_obligation_budget": 6
+}
