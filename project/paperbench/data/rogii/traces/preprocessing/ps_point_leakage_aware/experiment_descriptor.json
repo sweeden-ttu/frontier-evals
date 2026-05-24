@@ -1,0 +1,76 @@
+{
+  "variant": "ps_point_leakage_aware",
+  "approach": "PS-point detection + post-PS RMSE mask",
+  "base_paper": {
+    "role": "primary_experiment_descriptor",
+    "title": "Leakage in Data Mining: Formulation, Detection, and Avoidance",
+    "authors": "Kaufman, Rosset, Perlich, Stitelman",
+    "year": 2012,
+    "venue": "ACM TKDD",
+    "doi": "10.1145/2382575.2382577",
+    "url": "https://doi.org/10.1145/2382575.2382577",
+    "claims": [
+      "Train-test leakage inflates offline metrics; evaluation masks must match deployment horizon.",
+      "Post-perforation-start (PS) RMSE is the competition-relevant subset\u2014full-well eval is optimistic.",
+      "Strict vs lenient TVT input audits are ablatable governance gates (Type-3 consumers)."
+    ],
+    "ablation_sections": [
+      "\u00a73 leakage taxonomy",
+      "\u00a75 detection strategies"
+    ],
+    "supporting": []
+  },
+  "trace_theory_paper": {
+    "paperbench_id": "agent-tracing",
+    "title": "Agentic Programming as Formal Automata: A Chomsky-Hierarchy View of Tool-Using LLM Agents",
+    "authors": "Scott Weeden",
+    "bundle_path": "data/papers/agent-tracing",
+    "role": "trace_language_audit_and_agent_implementation",
+    "sections": [
+      "sec/4 audit protocol",
+      "sec/5 limitations"
+    ]
+  },
+  "agent_implementation": {
+    "trace_language_csv": "traces/preprocessing/ps_point_leakage_aware/trace_language.csv",
+    "trace_language_csv_absolute": "/lustre/work/sweeden/agent-tracing/examples/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv",
+    "resource_envelope_rows": "2-21",
+    "governance_bootstrap_rows": "22-26",
+    "chomsky_audit": "sec/4 evaluation audit protocol (Type-3 consumer bounds)",
+    "orchestrator": "paperbench.trace_pipeline.orchestrator.TracePipelineOrchestrator"
+  },
+  "experiment": {
+    "hypothesis": "PS-point detection + post-PS RMSE mask improves competition RMSE (post-PS) vs shared baseline under nested GroupKFold, as motivated by Kaufman, Rosset, Perlich, Stitelman (2012).",
+    "statistical_framework": "statistical_framework.md",
+    "ablation_plan": "ablation_plan.json",
+    "subdivision_manifest": "subdivision_manifest.json",
+    "primary_metric": "rmse_post_ps",
+    "smre": "mean_rmse_plus_std_across_folds",
+    "ablation_factors": [
+      {
+        "id": "ps_mask",
+        "factor": "eval_mask",
+        "levels": [
+          "full_well",
+          "post_ps_only"
+        ]
+      },
+      {
+        "id": "ps_detector",
+        "factor": "ps_detection",
+        "levels": [
+          "auto",
+          "manual_offset"
+        ]
+      },
+      {
+        "id": "leakage_audit",
+        "factor": "tvt_input_audit",
+        "levels": [
+          "strict",
+          "lenient"
+        ]
+      }
+    ]
+  }
+}
