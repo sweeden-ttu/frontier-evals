@@ -11,10 +11,29 @@ from paperbench.chomsky.producer_consumer import (
     bound_token_for_producer,
     is_type3_consumer_token,
 )
+from paperbench.chomsky.resource_envelope import (
+    ENVELOPE_ROW_COUNT,
+    ENVELOPE_ROW_START,
+    ENVELOPE_TOKEN,
+    EXTENDED_HEADERS,
+    RESOURCE_ENVELOPE_COLUMNS,
+    VALID_CHOMSKY_TYPES,
+    VALID_CONTEXT_POLICIES,
+    VALID_LTM,
+    VALID_LTM_BOUNDS,
+    COMPUTING_RESOURCE_EVAL_TOKENS,
+    validate_resource_envelope_rows,
+)
 from paperbench.chomsky.schema import ValidationReport
 
-# Re-export for tests and callers.
-GOVERNANCE_ROW_INDICES = {1, 2, 3}  # 0-based rows 2-4 in the file
+# Legacy 20-column traces: governance rows 2-4 (0-based indices 1-3).
+LEGACY_GOVERNANCE_ROW_INDICES = {1, 2, 3}
+EXTENDED_GOVERNANCE_ROW_INDICES = {
+    ENVELOPE_ROW_START + ENVELOPE_ROW_COUNT,
+    ENVELOPE_ROW_START + ENVELOPE_ROW_COUNT + 1,
+    ENVELOPE_ROW_START + ENVELOPE_ROW_COUNT + 2,
+}
+
 CLOSURE_TOKENS = frozenset(
     {
         "serialize_markdown",
@@ -28,10 +47,51 @@ CLI_PATTERN = re.compile(
     r"\b(kaggle|sbatch|uv\s+pip|curl|wget|python\s+|conda\s+|docker\s+|git\s+)",
     re.IGNORECASE,
 )
+RESOURCE_EVAL_TOKEN_PREFIX = "evaluate_computing_resources"
 
 
-def _non_empty_cells(row: list[str]) -> list[tuple[int, str]]:
-    return [(i, cell.strip()) for i, cell in enumerate(row) if cell.strip()]
+def _non_empty_cells(row: list[str], *, max_col: int | None = None) -> list[tuple[int, str]]:
+    limit = len(row) if max_col is None else min(max_col, len(row))
+    return [(i, cell.strip()) for i, cell in enumerate(row[:limit]) if cell.strip()]
+
+
+def _is_extended_format(header: list[str]) -> bool:
+    return len(header) == len(EXTENDED_HEADERS)
+
+
+def _governance_indices(rows: list[list[str]]) -> set[int]:
+    if rows and _is_extended_format([h.strip() for h in rows[0]]):
+        return set(EXTENDED_GOVERNANCE_ROW_INDICES)
+    return set(LEGACY_GOVERNANCE_ROW_INDICES)
+
+
+def _envelope_indices(rows: list[list[str]]) -> set[int]:
+    if not rows or not _is_extended_format([h.strip() for h in rows[0]]):
+        return set()
+    return set(range(ENVELOPE_ROW_START, ENVELOPE_ROW_START + ENVELOPE_ROW_COUNT))
+
+
+def _skip_pipeline_rules(row_idx: int, rows: list[list[str]]) -> bool:
+    """Rows exempt from single-action pipeline rules."""
+    if row_idx in _envelope_indices(rows):
+        return True
+    if row_idx in _governance_indices(rows):
+        return True
+    if row_idx < len(rows):
+        row = rows[row_idx]
+        if any(c.strip() == ENVELOPE_TOKEN for c in row[: len(CANONICAL_HEADERS)]):
+            return True
+        if any(c.strip().startswith(RESOURCE_EVAL_TOKEN_PREFIX) for c in row):
+            return True
+        if any(c.strip() in COMPUTING_RESOURCE_EVAL_TOKENS for c in row):
+            return True
+        if any(c.strip().startswith("validate_resource_bounds") for c in row):
+            return True
+        if any(c.strip().startswith("validate_slurm_envelope") for c in row):
+            return True
+        if any("evaluate_computing_resources.py" in c for c in row):
+            return True
+    return False
 
 
 def validate_trace_language_csv(
@@ -54,42 +114,59 @@ def validate_trace_language_csv(
 
     header = [h.strip() for h in rows[0]]
     column_count = len(header)
+    extended = _is_extended_format(header)
+    swim_cols = len(CANONICAL_HEADERS)
 
-    if column_count != 20:
-        errors.append(f"expected 20 columns, got {column_count}")
+    if column_count not in (swim_cols, len(EXTENDED_HEADERS)):
+        errors.append(f"expected {swim_cols} or {len(EXTENDED_HEADERS)} columns, got {column_count}")
 
-    if require_canonical_header and tuple(header) != CANONICAL_HEADERS:
-        errors.append("header does not match canonical Rogii swim-lane names")
+    if require_canonical_header:
+        expected = EXTENDED_HEADERS if extended else CANONICAL_HEADERS
+        if tuple(header) != expected:
+            errors.append("header does not match canonical Rogii swim-lane names (+ resource envelope columns)")
+
+    if extended:
+        errors.extend(validate_resource_envelope_rows(rows))
 
     found_closure = False
     has_cli = False
+    found_resource_eval = False
 
     for row_idx, row in enumerate(rows[1:], start=2):
+        zero_idx = row_idx - 1
         if len(row) != column_count:
-            errors.append(f"row {row_idx}: column count {len(row)} != header {column_count}")
-            continue
+            row = (row + [""] * column_count)[:column_count]
 
         cells = _non_empty_cells(row)
-        if not cells:
-            continue
+        swim_cells = _non_empty_cells(row, max_col=swim_cols)
 
         for _, value in cells:
             if value in CLOSURE_TOKENS:
                 found_closure = True
             if CLI_PATTERN.search(value):
                 has_cli = True
+            if value.startswith(RESOURCE_EVAL_TOKEN_PREFIX) or value in COMPUTING_RESOURCE_EVAL_TOKENS:
+                found_resource_eval = True
 
-        if (row_idx - 1) in GOVERNANCE_ROW_INDICES:
+        if _skip_pipeline_rules(zero_idx, rows):
             continue
 
-        if len(cells) > 1:
+        if extended:
+            resource_tail = row[swim_cols:]
+            if any(c.strip() for c in resource_tail):
+                errors.append(f"row {row_idx}: pipeline row must leave resource envelope columns empty")
+
+        if len(swim_cells) > 1:
             errors.append(
-                f"row {row_idx}: expected single-action row, found {len(cells)} cells: "
-                f"{[v for _, v in cells]}"
+                f"row {row_idx}: expected single-action row, found {len(swim_cells)} cells: "
+                f"{[v for _, v in swim_cells]}"
             )
 
     if not found_closure:
         errors.append("pipeline closure tokens not found in dependency-graph-orchestrator column")
+
+    if extended and not found_resource_eval:
+        errors.append("computing resources evaluation block missing (Chomsky formal agent rubric)")
 
     if has_cli:
         warnings.append("CLI/subprocess patterns detected (Type-0 envelope evidence)")
@@ -104,7 +181,7 @@ def validate_trace_language_csv(
         warnings=warnings,
         column_count=column_count,
         row_count=len(rows),
-        agent_columns=header,
+        agent_columns=header[:swim_cols],
     )
 
 
@@ -116,9 +193,9 @@ def collect_alphabet(path: Path | str) -> list[str]:
         reader = csv.reader(f)
         next(reader, None)
         for row in reader:
-            for cell in row:
+            for cell in row[: len(CANONICAL_HEADERS)]:
                 cell = cell.strip()
-                if cell:
+                if cell and cell != ENVELOPE_TOKEN:
                     tokens.add(cell)
     return sorted(tokens)
 
@@ -137,7 +214,9 @@ def validate_producer_type3_consumer_bounds(rows: list[list[str]]) -> list[str]:
     if record_idx is None:
         return errors
 
-    # Each producer column must have at least one type3 consumer token before record.
+    gov = _governance_indices(rows)
+    env = _envelope_indices(rows)
+
     for prod_col in sorted(PRODUCER_COLUMNS):
         consumer_col = CONSUMER_FOR_PRODUCER[prod_col]
         prod_name = CANONICAL_HEADERS[prod_col]
@@ -145,10 +224,13 @@ def validate_producer_type3_consumer_bounds(rows: list[list[str]]) -> list[str]:
         prod_rows = [
             i
             for i in range(1, record_idx)
-            if i - 1 not in GOVERNANCE_ROW_INDICES
+            if i not in gov
+            and i not in env
+            and not _skip_pipeline_rules(i, rows)
             and len(rows[i]) > prod_col
             and rows[i][prod_col].strip()
             and not is_type3_consumer_token(rows[i][prod_col].strip())
+            and rows[i][prod_col].strip() != ENVELOPE_TOKEN
         ]
         if not prod_rows:
             continue
@@ -163,19 +245,20 @@ def validate_producer_type3_consumer_bounds(rows: list[list[str]]) -> list[str]:
                 f"'{CANONICAL_HEADERS[consumer_col]}')"
             )
 
-    # CLI producer rows must be immediately followed by a Type-3 consumer row.
     for i in range(1, record_idx):
-        if i - 1 in GOVERNANCE_ROW_INDICES:
+        if i in gov or i in env or _skip_pipeline_rules(i, rows):
             continue
         row = rows[i]
-        for prod_col, val in _non_empty_cells(row):
+        for prod_col, val in _non_empty_cells(row, max_col=len(CANONICAL_HEADERS)):
             if prod_col not in PRODUCER_COLUMNS:
                 continue
             if not CLI_PATTERN.search(val):
                 continue
             consumer_col = CONSUMER_FOR_PRODUCER[prod_col]
             if i + 1 >= len(rows):
-                errors.append(f"row {i + 1}: CLI producer in '{CANONICAL_HEADERS[prod_col]}' has no following consumer")
+                errors.append(
+                    f"row {i + 1}: CLI producer in '{CANONICAL_HEADERS[prod_col]}' has no following consumer"
+                )
                 continue
             nxt = rows[i + 1]
             if len(nxt) <= consumer_col or not is_type3_consumer_token(nxt[consumer_col].strip()):
@@ -191,7 +274,6 @@ def insert_type3_consumer_bounds(rows: list[list[str]]) -> list[list[str]]:
     if not rows:
         return rows
 
-    # Strip prior type3 consumer-only rows for idempotent re-run.
     cleaned: list[list[str]] = [rows[0]]
     for row in rows[1:]:
         cells = _non_empty_cells(row)
@@ -207,15 +289,16 @@ def insert_type3_consumer_bounds(rows: list[list[str]]) -> list[list[str]]:
             record_idx = i
             break
 
+    gov = _governance_indices(rows)
     out: list[list[str]] = [rows[0]]
     seen_lane_bound: set[int] = set()
 
     for i in range(1, record_idx):
         row = (rows[i] + [""] * ncol)[:ncol]
         out.append(row)
-        if (i - 1) in GOVERNANCE_ROW_INDICES:
+        if i in gov or i in _envelope_indices(rows) or _skip_pipeline_rules(i, rows):
             continue
-        cells = _non_empty_cells(row)
+        cells = _non_empty_cells(row, max_col=len(CANONICAL_HEADERS))
         if len(cells) != 1:
             continue
         prod_col, val = cells[0]
@@ -237,7 +320,7 @@ def insert_type3_consumer_bounds(rows: list[list[str]]) -> list[list[str]]:
     active: set[int] = set()
     bounds_present: set[str] = set()
     for row in out:
-        for j, c in enumerate(row):
+        for j, c in enumerate(row[: len(CANONICAL_HEADERS)]):
             cs = c.strip()
             if is_type3_consumer_token(cs):
                 bounds_present.add(cs)

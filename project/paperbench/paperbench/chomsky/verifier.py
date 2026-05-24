@@ -114,6 +114,13 @@ def verify_classification(
                 evidence=classification.memory_hypothesis,
             )
         )
+        checks.append(
+            CheckResult(
+                name="computing_resources_envelope_declared",
+                status="PASS" if trace_report and trace_report.column_count == 29 else "FAIL",
+                evidence=f"columns={trace_report.column_count if trace_report else 0}",
+            )
+        )
 
     if trace_report and trace_report.valid is False and predicted != "Type-0":
         demoted_to = "Type-2"

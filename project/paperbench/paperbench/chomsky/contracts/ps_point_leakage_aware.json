@@ -2,7 +2,7 @@
   "schema": "chomsky_classification_v1",
   "agent_id": "ps_point_leakage_aware",
   "source_paths": [
-    "/lustre/work/sweeden/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv"
+    "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv"
   ],
   "sigma_trace_alphabet_encoding": [
     "add_dep",
@@ -38,6 +38,7 @@
     "cd /lustre/work/sweeden/rogii && mamba run -n kc-rogii-wellbore-geology-prediction pytest tests/ -q --tb=line 2>/dev/null || pytest tests/ -q --tb=line",
     "cd /lustre/work/sweeden/rogii && mkdir -p artifacts/checkpoints/episodes artifacts/model_card",
     "cd /lustre/work/sweeden/rogii && python scripts/code_review_trace.py --scan-hardcoded --paths pipeline/ scripts/ hpcc/",
+    "cd /lustre/work/sweeden/rogii && python scripts/evaluate_computing_resources.py --trace /lustre/work/sweeden/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv --variant ps_point_leakage_aware -q",
     "cd /lustre/work/sweeden/rogii && python scripts/export_safetensors_adapter.py --out artifacts/checkpoints/fold_{k}.safetensors",
     "cd /lustre/work/sweeden/rogii && python scripts/hardcoded_audit.py --out artifacts/hardcoded_parameter_summary.json --explain",
     "cd /lustre/work/sweeden/rogii && python scripts/idempotency_review.py --artifacts-dir artifacts/ -q",
@@ -68,6 +69,7 @@
     "dispatch",
     "emit_fold_indices",
     "emit_review_findings_markdown",
+    "evaluate_computing_resources_chomsky_rubric",
     "gate_offline_beam_feature_requirements",
     "generate_sample_submission_from_checkpoint",
     "idempotency_review",
@@ -147,6 +149,8 @@
     "type3_consumer_bound_submission_formatter",
     "type3_consumer_bound_target_diagnostician",
     "type3_consumer_bound_well_group_detector",
+    "validate_resource_bounds_per_chomsky_class",
+    "validate_slurm_envelope_vs_hpcc_scripts",
     "verify_cv_splits_respect_group_leakage_constraints",
     "verify_rerun_produces_identical_artifacts",
     "verify_rmse_objective_matches_competition_metric",

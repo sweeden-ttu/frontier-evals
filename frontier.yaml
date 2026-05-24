@@ -23,7 +23,8 @@ integration:
       - paperbench/scripts/implement_agent_tracing.py
   datasets:
     papers_with_rubrics: project/paperbench/data
-    rogii_traces: /lustre/work/sweeden/rogii/traces/preprocessing
+    rogii_traces: /lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/traces/preprocessing
+    rogii_papers: /lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/papers
   env:
     paperbench_data_dir: PAPERBENCH_DATA_DIR
 

@@ -7,16 +7,21 @@ _PAPERBENCH_ROOT = Path(__file__).resolve().parents[2]
 _DEFAULT_HPCC_ROGII = Path("/lustre/work/sweeden/rogii")
 _BUNDLED_ROGII = _PAPERBENCH_ROOT / "data" / "rogii"
 _AGENT_TRACING_EXAMPLES = Path("/lustre/work/sweeden/agent-tracing/examples/rogii")
+_AGENT_TRACING_TRACE_BASELINE = Path("/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii")
 
 
 def resolve_rogii_root() -> Path:
     """Rogii repo root (contains traces/preprocessing/{variant}/)."""
     if env := os.environ.get("ROGII_ROOT"):
         return Path(env)
-    if (_BUNDLED_ROGII / "traces" / "preprocessing").is_dir():
-        return _BUNDLED_ROGII
-    if (_AGENT_TRACING_EXAMPLES / "traces" / "preprocessing").is_dir():
-        return _AGENT_TRACING_EXAMPLES
+    for candidate in (
+        _AGENT_TRACING_TRACE_BASELINE,
+        _AGENT_TRACING_EXAMPLES,
+        _BUNDLED_ROGII,
+        _DEFAULT_HPCC_ROGII,
+    ):
+        if (candidate / "traces" / "preprocessing").is_dir():
+            return candidate
     return _DEFAULT_HPCC_ROGII
 
 

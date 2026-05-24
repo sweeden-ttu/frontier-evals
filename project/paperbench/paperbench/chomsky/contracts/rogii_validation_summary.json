@@ -1,15 +1,15 @@
 [
   {
-    "trace_path": "/lustre/work/sweeden/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv",
+    "trace_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv",
     "validation": {
-      "path": "/lustre/work/sweeden/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv",
+      "path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv",
       "valid": true,
       "errors": [],
       "warnings": [
         "CLI/subprocess patterns detected (Type-0 envelope evidence)"
       ],
-      "column_count": 20,
-      "row_count": 181,
+      "column_count": 29,
+      "row_count": 209,
       "agent_columns": [
         "data_downloader",
         "schema-sentinel",
@@ -37,7 +37,7 @@
       "schema": "chomsky_classification_v1",
       "agent_id": "baseline_column_transformer",
       "source_paths": [
-        "/lustre/work/sweeden/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv"
+        "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv"
       ],
       "sigma_trace_alphabet_encoding": [
         "add_dep",
@@ -72,6 +72,7 @@
         "cd /lustre/work/sweeden/rogii && mamba run -n kc-rogii-wellbore-geology-prediction pytest tests/ -q --tb=line 2>/dev/null || pytest tests/ -q --tb=line",
         "cd /lustre/work/sweeden/rogii && mkdir -p artifacts/checkpoints/episodes artifacts/model_card",
         "cd /lustre/work/sweeden/rogii && python scripts/code_review_trace.py --scan-hardcoded --paths pipeline/ scripts/ hpcc/",
+        "cd /lustre/work/sweeden/rogii && python scripts/evaluate_computing_resources.py --trace /lustre/work/sweeden/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv --variant baseline_column_transformer -q",
         "cd /lustre/work/sweeden/rogii && python scripts/export_safetensors_adapter.py --out artifacts/checkpoints/fold_{k}.safetensors",
         "cd /lustre/work/sweeden/rogii && python scripts/hardcoded_audit.py --out artifacts/hardcoded_parameter_summary.json --explain",
         "cd /lustre/work/sweeden/rogii && python scripts/idempotency_review.py --artifacts-dir artifacts/ -q",
@@ -111,6 +112,7 @@
         "emit_fold_indices",
         "emit_review_findings_markdown",
         "encode_formation_codes",
+        "evaluate_computing_resources_chomsky_rubric",
         "generate_sample_submission_from_checkpoint",
         "idempotency_review",
         "identify_depth_column",
@@ -194,6 +196,8 @@
         "type3_consumer_bound_submission_formatter",
         "type3_consumer_bound_target_diagnostician",
         "type3_consumer_bound_well_group_detector",
+        "validate_resource_bounds_per_chomsky_class",
+        "validate_slurm_envelope_vs_hpcc_scripts",
         "verify_cv_splits_respect_group_leakage_constraints",
         "verify_rerun_produces_identical_artifacts",
         "verify_rmse_objective_matches_competition_metric"
@@ -226,7 +230,7 @@
         {
           "name": "alphabet_documented",
           "status": "PASS",
-          "evidence": "157 tokens"
+          "evidence": "161 tokens"
         },
         {
           "name": "trace_csv_valid",
@@ -234,25 +238,35 @@
           "evidence": "ok"
         },
         {
+          "name": "producer_type3_consumer_bounds",
+          "status": "PASS",
+          "evidence": "all producer lanes bounded by Type-3 consumers"
+        },
+        {
           "name": "type0_external_store",
           "status": "PASS",
           "evidence": "unbounded external store envelope (filesystem, Slurm, Kaggle API)"
+        },
+        {
+          "name": "computing_resources_envelope_declared",
+          "status": "PASS",
+          "evidence": "columns=29"
         }
       ]
     },
     "contract_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/chomsky/contracts/baseline_column_transformer.json"
   },
   {
-    "trace_path": "/lustre/work/sweeden/rogii/traces/preprocessing/typewell_gr_alignment/trace_language.csv",
+    "trace_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/formation_plane_spatial/trace_language.csv",
     "validation": {
-      "path": "/lustre/work/sweeden/rogii/traces/preprocessing/typewell_gr_alignment/trace_language.csv",
+      "path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/formation_plane_spatial/trace_language.csv",
       "valid": true,
       "errors": [],
       "warnings": [
         "CLI/subprocess patterns detected (Type-0 envelope evidence)"
       ],
-      "column_count": 20,
-      "row_count": 172,
+      "column_count": 29,
+      "row_count": 196,
       "agent_columns": [
         "data_downloader",
         "schema-sentinel",
@@ -278,28 +292,27 @@
     },
     "classification": {
       "schema": "chomsky_classification_v1",
-      "agent_id": "typewell_gr_alignment",
+      "agent_id": "formation_plane_spatial",
       "source_paths": [
-        "/lustre/work/sweeden/rogii/traces/preprocessing/typewell_gr_alignment/trace_language.csv"
+        "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/formation_plane_spatial/trace_language.csv"
       ],
       "sigma_trace_alphabet_encoding": [
         "add_dep",
         "add_task",
-        "align_horizontal_to_typewell",
         "align_to_sample_submission_columns",
         "architecture_review",
-        "assemble_alignment_feature_matrix",
+        "assemble_column_transformer",
         "assert_columns_match_sample",
         "assert_no_nans",
         "assert_row_count_matches_test",
-        "attach_typewell_gr_at_estimated_tvt",
         "average_seed_predictions",
         "average_test_predictions",
         "bind_producers_to_type3_consumers",
-        "build_typewell_gr_interpolator",
+        "build_highcard_pipeline",
+        "build_numeric_pipeline",
         "cd /lustre/work/sweeden/rogii && cp submission.csv data/submission.csv",
         "cd /lustre/work/sweeden/rogii && find data/train -name '*__horizontal_well.csv' | sort",
-        "cd /lustre/work/sweeden/rogii && find data/train -name '*__typewell.csv' | sort",
+        "cd /lustre/work/sweeden/rogii && find data/train -name '*__horizontal_well.csv' | wc -l",
         "cd /lustre/work/sweeden/rogii && kaggle competitions download -c rogii-wellbore-geology-prediction -p data/ -q",
         "cd /lustre/work/sweeden/rogii && kaggle competitions files -c rogii-wellbore-geology-prediction -q",
         "cd /lustre/work/sweeden/rogii && kaggle competitions leaderboard -c rogii-wellbore-geology-prediction -q",
@@ -316,6 +329,7 @@
         "cd /lustre/work/sweeden/rogii && mamba run -n kc-rogii-wellbore-geology-prediction pytest tests/ -q --tb=line 2>/dev/null || pytest tests/ -q --tb=line",
         "cd /lustre/work/sweeden/rogii && mkdir -p artifacts/checkpoints/episodes artifacts/model_card",
         "cd /lustre/work/sweeden/rogii && python scripts/code_review_trace.py --scan-hardcoded --paths pipeline/ scripts/ hpcc/",
+        "cd /lustre/work/sweeden/rogii && python scripts/evaluate_computing_resources.py --trace /lustre/work/sweeden/rogii/traces/preprocessing/formation_plane_spatial/trace_language.csv --variant formation_plane_spatial -q",
         "cd /lustre/work/sweeden/rogii && python scripts/export_safetensors_adapter.py --out artifacts/checkpoints/fold_{k}.safetensors",
         "cd /lustre/work/sweeden/rogii && python scripts/hardcoded_audit.py --out artifacts/hardcoded_parameter_summary.json --explain",
         "cd /lustre/work/sweeden/rogii && python scripts/idempotency_review.py --artifacts-dir artifacts/ -q",
@@ -326,34 +340,33 @@
         "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/train_tcn.slurm",
         "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/train_tcn_episodic.slurm",
         "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/vague_spec_batch_matador.slurm",
-        "cd /lustre/work/sweeden/rogii && test $(find data/train -name '*__horizontal_well.csv' | wc -l) -eq $(find data/train -name '*__typewell.csv' | wc -l)",
         "cd /lustre/work/sweeden/rogii && unzip -o data/rogii-wellbore-geology-prediction.zip -d data/",
         "cd /lustre/work/sweeden/rogii && uv pip install lightgbm -q",
-        "check_train_test_well_disjoint",
         "choose_cv_scheme",
         "code_review",
         "collect_oof_predictions",
         "compare_to_baseline",
-        "compute_gr_correlation_baseline",
+        "compute_azimuth_inclination",
+        "compute_drilling_geometry_features",
         "compute_mean_oof_rmse",
+        "compute_pairwise_well_distances",
         "compute_residuals",
         "compute_rmse_per_fold",
-        "compute_row_counts",
+        "compute_rolling_features",
+        "compute_summary_stats",
         "define_episode_boundaries_by_well_or_fold",
-        "derive_well_id_from_filename",
         "design_factorial_and_episodic_training",
         "detect_sentinel_values",
         "dispatch",
         "emit_fold_indices",
         "emit_review_findings_markdown",
-        "estimate_tvt_from_gr",
-        "evaluate_gr_baseline_rmse_by_well",
+        "encode_formation_codes",
+        "evaluate_computing_resources_chomsky_rubric",
+        "fit_formation_plane_knn",
         "generate_sample_submission_from_checkpoint",
-        "gr_to_tvt_lookup",
         "idempotency_review",
         "identify_worst_wells",
         "infer_target_columns",
-        "inspect_gr_missingness_by_well",
         "instantiate_groupkfold",
         "inverse_log1p",
         "kaggle --version",
@@ -362,13 +375,12 @@
         "load_checkpoint_pkl_or_safetensors",
         "load_episode_checkpoints",
         "load_fold_models",
-        "load_horizontal_well_schema",
         "load_sample_submission",
-        "load_typewell_schema",
         "log_best_iteration",
+        "ollama show granite4:3b",
         "pin_seed",
         "plan_episodic_training_schedule",
-        "plot_horizontal_vs_typewell_gr",
+        "plot_correlation_matrix",
         "plot_residuals_vs_target",
         "predict_per_fold",
         "print_head_describe",
@@ -379,7 +391,6 @@
         "record_checkpoint_artifact_policy",
         "record_initial_adr",
         "record_kaggle_dataset_or_model_publish_adr",
-        "register_paired_well_ids",
         "register_schema",
         "replace_sentinels_with_nan",
         "report_std_across_folds",
@@ -428,6 +439,9 @@
         "type3_consumer_bound_submission_formatter",
         "type3_consumer_bound_target_diagnostician",
         "type3_consumer_bound_well_group_detector",
+        "validate_resource_bounds_per_chomsky_class",
+        "validate_slurm_envelope_vs_hpcc_scripts",
+        "validate_xyz_gr_columns",
         "verify_cv_splits_respect_group_leakage_constraints",
         "verify_rerun_produces_identical_artifacts",
         "verify_rmse_objective_matches_competition_metric"
@@ -443,7 +457,7 @@
     },
     "verification": {
       "schema": "verification_report_v1",
-      "agent_id": "typewell_gr_alignment",
+      "agent_id": "formation_plane_spatial",
       "predicted_class": "Type-0",
       "demoted_to": null,
       "checks": [
@@ -455,7 +469,7 @@
         {
           "name": "agent_id_present",
           "status": "PASS",
-          "evidence": "typewell_gr_alignment"
+          "evidence": "formation_plane_spatial"
         },
         {
           "name": "alphabet_documented",
@@ -468,25 +482,281 @@
           "evidence": "ok"
         },
         {
+          "name": "producer_type3_consumer_bounds",
+          "status": "PASS",
+          "evidence": "all producer lanes bounded by Type-3 consumers"
+        },
+        {
           "name": "type0_external_store",
           "status": "PASS",
           "evidence": "unbounded external store envelope (filesystem, Slurm, Kaggle API)"
+        },
+        {
+          "name": "computing_resources_envelope_declared",
+          "status": "PASS",
+          "evidence": "columns=29"
         }
       ]
     },
-    "contract_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/chomsky/contracts/typewell_gr_alignment.json"
+    "contract_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/chomsky/contracts/formation_plane_spatial.json"
   },
   {
-    "trace_path": "/lustre/work/sweeden/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv",
+    "trace_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/parallel_multiwell_loader/trace_language.csv",
     "validation": {
-      "path": "/lustre/work/sweeden/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv",
+      "path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/parallel_multiwell_loader/trace_language.csv",
       "valid": true,
       "errors": [],
       "warnings": [
         "CLI/subprocess patterns detected (Type-0 envelope evidence)"
       ],
-      "column_count": 20,
-      "row_count": 170,
+      "column_count": 29,
+      "row_count": 198,
+      "agent_columns": [
+        "data_downloader",
+        "schema-sentinel",
+        "eda_profiler",
+        "well_group_detector",
+        "target_diagnostician",
+        "feature_engineer",
+        "preprocessor",
+        "cv_orchestrator",
+        "model_trainer",
+        "model_ensembler",
+        "predictor",
+        "oof_evaluator",
+        "error_analyzer",
+        "submission_formatter",
+        "submission_validator",
+        "kaggle_submitter",
+        "seed-control-officer",
+        "experiment-design-architect",
+        "architecture-decision-recorder",
+        "dependency-graph-orchestrator"
+      ]
+    },
+    "classification": {
+      "schema": "chomsky_classification_v1",
+      "agent_id": "parallel_multiwell_loader",
+      "source_paths": [
+        "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/parallel_multiwell_loader/trace_language.csv"
+      ],
+      "sigma_trace_alphabet_encoding": [
+        "add_dep",
+        "add_task",
+        "align_to_sample_submission_columns",
+        "architecture_review",
+        "assemble_column_transformer",
+        "assert_columns_match_sample",
+        "assert_no_nans",
+        "assert_row_count_matches_test",
+        "attach_geology_surface_features",
+        "average_seed_predictions",
+        "average_test_predictions",
+        "bind_producers_to_type3_consumers",
+        "build_numeric_pipeline",
+        "cd /lustre/work/sweeden/rogii && cp submission.csv data/submission.csv",
+        "cd /lustre/work/sweeden/rogii && find data/train -name '*__horizontal_well.csv' -print0 | xargs -0 -P 4 wc -l",
+        "cd /lustre/work/sweeden/rogii && head -5 data/train/*__horizontal_well.csv data/train/*__typewell.csv",
+        "cd /lustre/work/sweeden/rogii && kaggle competitions download -c rogii-wellbore-geology-prediction -p data/ -q",
+        "cd /lustre/work/sweeden/rogii && kaggle competitions files -c rogii-wellbore-geology-prediction -q",
+        "cd /lustre/work/sweeden/rogii && kaggle competitions leaderboard -c rogii-wellbore-geology-prediction -q",
+        "cd /lustre/work/sweeden/rogii && kaggle competitions submissions -c rogii-wellbore-geology-prediction -q",
+        "cd /lustre/work/sweeden/rogii && kaggle competitions submit -c rogii-wellbore-geology-prediction -f submission.csv -m rogii-trace -q",
+        "cd /lustre/work/sweeden/rogii && kaggle datasets create -p artifacts/checkpoints -r zip -m rogii-checkpoints-v1",
+        "cd /lustre/work/sweeden/rogii && kaggle datasets init -p artifacts/checkpoints",
+        "cd /lustre/work/sweeden/rogii && kaggle datasets version -p artifacts/checkpoints -r zip -m rogii-checkpoints-v2",
+        "cd /lustre/work/sweeden/rogii && kaggle models create -p artifacts/model_card",
+        "cd /lustre/work/sweeden/rogii && kaggle models init -p artifacts/model_card",
+        "cd /lustre/work/sweeden/rogii && kaggle models versions create -m sweeden-ttu/rogii-wellbore-checkpoint -p artifacts/model_card -r zip",
+        "cd /lustre/work/sweeden/rogii && ls -la artifacts/",
+        "cd /lustre/work/sweeden/rogii && ls -la artifacts/checkpoints/ && test -f artifacts/checkpoints/episode_manifest.json",
+        "cd /lustre/work/sweeden/rogii && mamba run -n kc-rogii-wellbore-geology-prediction pytest tests/ -q --tb=line 2>/dev/null || pytest tests/ -q --tb=line",
+        "cd /lustre/work/sweeden/rogii && mkdir -p artifacts/checkpoints/episodes artifacts/model_card",
+        "cd /lustre/work/sweeden/rogii && python scripts/code_review_trace.py --scan-hardcoded --paths pipeline/ scripts/ hpcc/",
+        "cd /lustre/work/sweeden/rogii && python scripts/evaluate_computing_resources.py --trace /lustre/work/sweeden/rogii/traces/preprocessing/parallel_multiwell_loader/trace_language.csv --variant parallel_multiwell_loader -q",
+        "cd /lustre/work/sweeden/rogii && python scripts/export_safetensors_adapter.py --out artifacts/checkpoints/fold_{k}.safetensors",
+        "cd /lustre/work/sweeden/rogii && python scripts/hardcoded_audit.py --out artifacts/hardcoded_parameter_summary.json --explain",
+        "cd /lustre/work/sweeden/rogii && python scripts/idempotency_review.py --artifacts-dir artifacts/ -q",
+        "cd /lustre/work/sweeden/rogii && python scripts/save_fold_checkpoint.py --out artifacts/checkpoints/fold_{k}.pkl",
+        "cd /lustre/work/sweeden/rogii && python scripts/write_dataset_metadata.py -p artifacts/checkpoints -o artifacts/checkpoints/dataset-metadata.json",
+        "cd /lustre/work/sweeden/rogii && python scripts/write_episode_manifest.py --out artifacts/checkpoints/episode_manifest.json",
+        "cd /lustre/work/sweeden/rogii && python scripts/write_kaggle_model_description.py -p artifacts/model_card",
+        "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/train_tcn.slurm",
+        "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/train_tcn_episodic.slurm",
+        "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/vague_spec_batch_matador.slurm",
+        "cd /lustre/work/sweeden/rogii && test -d data/train && test -d data/test",
+        "cd /lustre/work/sweeden/rogii && unzip -o data/rogii-wellbore-geology-prediction.zip -d data/",
+        "cd /lustre/work/sweeden/rogii && uv pip install lightgbm -q",
+        "cd /lustre/work/sweeden/rogii && uv pip install lightgbm xgboost scikit-learn pandas numpy -q",
+        "choose_cv_scheme",
+        "code_review",
+        "collect_oof_predictions",
+        "compare_to_baseline",
+        "compute_mean_oof_rmse",
+        "compute_missingness_rates",
+        "compute_residuals",
+        "compute_rmse_per_fold",
+        "compute_rolling_features",
+        "compute_row_counts",
+        "count_unique_groups",
+        "define_episode_boundaries_by_well_or_fold",
+        "derive_well_id_from_path",
+        "design_factorial_and_episodic_training",
+        "detect_sentinel_values",
+        "dispatch",
+        "emit_fold_indices",
+        "emit_review_findings_markdown",
+        "engineer_per_well_feature_matrix",
+        "evaluate_computing_resources_chomsky_rubric",
+        "generate_sample_submission_from_checkpoint",
+        "idempotency_review",
+        "identify_worst_wells",
+        "infer_surface_column_roles",
+        "infer_target_columns",
+        "inspect_well_and_surface_column_schema",
+        "instantiate_groupkfold",
+        "inverse_log1p",
+        "kaggle --version",
+        "kaggle config view -q",
+        "kaggle kernels push --help",
+        "load_checkpoint_pkl_or_safetensors",
+        "load_episode_checkpoints",
+        "load_fold_models",
+        "load_sample_submission",
+        "log_best_iteration",
+        "normalize_required_feature_columns",
+        "pin_seed",
+        "plan_episodic_training_schedule",
+        "plot_geology_surface_columns",
+        "plot_residuals_vs_target",
+        "predict_per_fold",
+        "print_head_describe",
+        "provide_groups",
+        "recommend_group_key",
+        "record",
+        "record_architecture_review_adr",
+        "record_checkpoint_artifact_policy",
+        "record_initial_adr",
+        "record_kaggle_dataset_or_model_publish_adr",
+        "register_schema",
+        "replace_sentinels_with_nan",
+        "report_std_across_folds",
+        "review_checkpoint_manifest_vs_training_plan",
+        "review_shortcuts_and_hardcoded_values",
+        "select_best_episode_by_oof_rmse",
+        "serialize_markdown",
+        "set_episode_max_steps_and_patience",
+        "set_id_column",
+        "set_metric_rmse",
+        "set_objective_regression",
+        "set_prediction_columns",
+        "slice_by_depth_bin",
+        "slice_by_well",
+        "squeue -u $USER -n rogii_tcn -h",
+        "statistical_mathematical_soundness_review",
+        "summarize_hardcoded_parameters",
+        "summarize_hardcoded_variables_with_explanations",
+        "test_review",
+        "topological_order",
+        "train_with_seed_2024",
+        "train_with_seed_42",
+        "train_with_seed_69",
+        "training_review",
+        "type3_consumer_bound_architecture_decision_recorder",
+        "type3_consumer_bound_architecture_decision_recorder_after_cli",
+        "type3_consumer_bound_cv_orchestrator",
+        "type3_consumer_bound_data_downloader",
+        "type3_consumer_bound_data_downloader_after_cli",
+        "type3_consumer_bound_eda_profiler",
+        "type3_consumer_bound_error_analyzer",
+        "type3_consumer_bound_error_analyzer_after_cli",
+        "type3_consumer_bound_experiment_design_architect",
+        "type3_consumer_bound_experiment_design_architect_after_cli",
+        "type3_consumer_bound_feature_engineer",
+        "type3_consumer_bound_kaggle_submitter",
+        "type3_consumer_bound_kaggle_submitter_after_cli",
+        "type3_consumer_bound_model_ensembler",
+        "type3_consumer_bound_model_trainer",
+        "type3_consumer_bound_model_trainer_after_cli",
+        "type3_consumer_bound_oof_evaluator",
+        "type3_consumer_bound_predictor",
+        "type3_consumer_bound_preprocessor",
+        "type3_consumer_bound_seed_control_officer",
+        "type3_consumer_bound_seed_control_officer_after_cli",
+        "type3_consumer_bound_submission_formatter",
+        "type3_consumer_bound_target_diagnostician",
+        "type3_consumer_bound_well_group_detector",
+        "validate_resource_bounds_per_chomsky_class",
+        "validate_slurm_envelope_vs_hpcc_scripts",
+        "verify_cv_splits_respect_group_leakage_constraints",
+        "verify_rerun_produces_identical_artifacts",
+        "verify_rmse_objective_matches_competition_metric"
+      ],
+      "predicted_chomsky_class": "Type-0",
+      "structural_witnesses": [
+        "CLI/subprocess tokens in trace alphabet (kaggle/sbatch/uv/etc.)",
+        "dependency-graph tokens: add_task/add_dep/topological_order/dispatch"
+      ],
+      "memory_hypothesis": "unbounded external store envelope (filesystem, Slurm, Kaggle API)",
+      "probe_plan_ref": null,
+      "vv_obligation_budget": 4
+    },
+    "verification": {
+      "schema": "verification_report_v1",
+      "agent_id": "parallel_multiwell_loader",
+      "predicted_class": "Type-0",
+      "demoted_to": null,
+      "checks": [
+        {
+          "name": "schema_version",
+          "status": "PASS",
+          "evidence": "chomsky_classification_v1"
+        },
+        {
+          "name": "agent_id_present",
+          "status": "PASS",
+          "evidence": "parallel_multiwell_loader"
+        },
+        {
+          "name": "alphabet_documented",
+          "status": "PASS",
+          "evidence": "150 tokens"
+        },
+        {
+          "name": "trace_csv_valid",
+          "status": "PASS",
+          "evidence": "ok"
+        },
+        {
+          "name": "producer_type3_consumer_bounds",
+          "status": "PASS",
+          "evidence": "all producer lanes bounded by Type-3 consumers"
+        },
+        {
+          "name": "type0_external_store",
+          "status": "PASS",
+          "evidence": "unbounded external store envelope (filesystem, Slurm, Kaggle API)"
+        },
+        {
+          "name": "computing_resources_envelope_declared",
+          "status": "PASS",
+          "evidence": "columns=29"
+        }
+      ]
+    },
+    "contract_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/chomsky/contracts/parallel_multiwell_loader.json"
+  },
+  {
+    "trace_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv",
+    "validation": {
+      "path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv",
+      "valid": true,
+      "errors": [],
+      "warnings": [
+        "CLI/subprocess patterns detected (Type-0 envelope evidence)"
+      ],
+      "column_count": 29,
+      "row_count": 198,
       "agent_columns": [
         "data_downloader",
         "schema-sentinel",
@@ -514,7 +784,7 @@
       "schema": "chomsky_classification_v1",
       "agent_id": "ps_point_leakage_aware",
       "source_paths": [
-        "/lustre/work/sweeden/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv"
+        "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv"
       ],
       "sigma_trace_alphabet_encoding": [
         "add_dep",
@@ -550,6 +820,7 @@
         "cd /lustre/work/sweeden/rogii && mamba run -n kc-rogii-wellbore-geology-prediction pytest tests/ -q --tb=line 2>/dev/null || pytest tests/ -q --tb=line",
         "cd /lustre/work/sweeden/rogii && mkdir -p artifacts/checkpoints/episodes artifacts/model_card",
         "cd /lustre/work/sweeden/rogii && python scripts/code_review_trace.py --scan-hardcoded --paths pipeline/ scripts/ hpcc/",
+        "cd /lustre/work/sweeden/rogii && python scripts/evaluate_computing_resources.py --trace /lustre/work/sweeden/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv --variant ps_point_leakage_aware -q",
         "cd /lustre/work/sweeden/rogii && python scripts/export_safetensors_adapter.py --out artifacts/checkpoints/fold_{k}.safetensors",
         "cd /lustre/work/sweeden/rogii && python scripts/hardcoded_audit.py --out artifacts/hardcoded_parameter_summary.json --explain",
         "cd /lustre/work/sweeden/rogii && python scripts/idempotency_review.py --artifacts-dir artifacts/ -q",
@@ -580,6 +851,7 @@
         "dispatch",
         "emit_fold_indices",
         "emit_review_findings_markdown",
+        "evaluate_computing_resources_chomsky_rubric",
         "gate_offline_beam_feature_requirements",
         "generate_sample_submission_from_checkpoint",
         "idempotency_review",
@@ -659,6 +931,8 @@
         "type3_consumer_bound_submission_formatter",
         "type3_consumer_bound_target_diagnostician",
         "type3_consumer_bound_well_group_detector",
+        "validate_resource_bounds_per_chomsky_class",
+        "validate_slurm_envelope_vs_hpcc_scripts",
         "verify_cv_splits_respect_group_leakage_constraints",
         "verify_rerun_produces_identical_artifacts",
         "verify_rmse_objective_matches_competition_metric",
@@ -692,7 +966,7 @@
         {
           "name": "alphabet_documented",
           "status": "PASS",
-          "evidence": "146 tokens"
+          "evidence": "150 tokens"
         },
         {
           "name": "trace_csv_valid",
@@ -700,25 +974,35 @@
           "evidence": "ok"
         },
         {
+          "name": "producer_type3_consumer_bounds",
+          "status": "PASS",
+          "evidence": "all producer lanes bounded by Type-3 consumers"
+        },
+        {
           "name": "type0_external_store",
           "status": "PASS",
           "evidence": "unbounded external store envelope (filesystem, Slurm, Kaggle API)"
+        },
+        {
+          "name": "computing_resources_envelope_declared",
+          "status": "PASS",
+          "evidence": "columns=29"
         }
       ]
     },
     "contract_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/chomsky/contracts/ps_point_leakage_aware.json"
   },
   {
-    "trace_path": "/lustre/work/sweeden/rogii/traces/preprocessing/robust_scale_log1p/trace_language.csv",
+    "trace_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/robust_scale_log1p/trace_language.csv",
     "validation": {
-      "path": "/lustre/work/sweeden/rogii/traces/preprocessing/robust_scale_log1p/trace_language.csv",
+      "path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/robust_scale_log1p/trace_language.csv",
       "valid": true,
       "errors": [],
       "warnings": [
         "CLI/subprocess patterns detected (Type-0 envelope evidence)"
       ],
-      "column_count": 20,
-      "row_count": 175,
+      "column_count": 29,
+      "row_count": 203,
       "agent_columns": [
         "data_downloader",
         "schema-sentinel",
@@ -746,7 +1030,7 @@
       "schema": "chomsky_classification_v1",
       "agent_id": "robust_scale_log1p",
       "source_paths": [
-        "/lustre/work/sweeden/rogii/traces/preprocessing/robust_scale_log1p/trace_language.csv"
+        "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/robust_scale_log1p/trace_language.csv"
       ],
       "sigma_trace_alphabet_encoding": [
         "add_dep",
@@ -780,6 +1064,7 @@
         "cd /lustre/work/sweeden/rogii && mamba run -n kc-rogii-wellbore-geology-prediction pytest tests/ -q --tb=line 2>/dev/null || pytest tests/ -q --tb=line",
         "cd /lustre/work/sweeden/rogii && mkdir -p artifacts/checkpoints/episodes artifacts/model_card",
         "cd /lustre/work/sweeden/rogii && python scripts/code_review_trace.py --scan-hardcoded --paths pipeline/ scripts/ hpcc/",
+        "cd /lustre/work/sweeden/rogii && python scripts/evaluate_computing_resources.py --trace /lustre/work/sweeden/rogii/traces/preprocessing/robust_scale_log1p/trace_language.csv --variant robust_scale_log1p -q",
         "cd /lustre/work/sweeden/rogii && python scripts/export_safetensors_adapter.py --out artifacts/checkpoints/fold_{k}.safetensors",
         "cd /lustre/work/sweeden/rogii && python scripts/hardcoded_audit.py --out artifacts/hardcoded_parameter_summary.json --explain",
         "cd /lustre/work/sweeden/rogii && python scripts/idempotency_review.py --artifacts-dir artifacts/ -q",
@@ -813,6 +1098,7 @@
         "emit_fold_indices",
         "emit_review_findings_markdown",
         "encode_formation_codes",
+        "evaluate_computing_resources_chomsky_rubric",
         "fit_log1p_transform_params",
         "generate_sample_submission_from_checkpoint",
         "idempotency_review",
@@ -897,6 +1183,8 @@
         "type3_consumer_bound_submission_formatter",
         "type3_consumer_bound_target_diagnostician",
         "type3_consumer_bound_well_group_detector",
+        "validate_resource_bounds_per_chomsky_class",
+        "validate_slurm_envelope_vs_hpcc_scripts",
         "verify_cv_splits_respect_group_leakage_constraints",
         "verify_rerun_produces_identical_artifacts",
         "verify_rmse_objective_matches_competition_metric"
@@ -929,7 +1217,7 @@
         {
           "name": "alphabet_documented",
           "status": "PASS",
-          "evidence": "151 tokens"
+          "evidence": "155 tokens"
         },
         {
           "name": "trace_csv_valid",
@@ -937,25 +1225,35 @@
           "evidence": "ok"
         },
         {
+          "name": "producer_type3_consumer_bounds",
+          "status": "PASS",
+          "evidence": "all producer lanes bounded by Type-3 consumers"
+        },
+        {
           "name": "type0_external_store",
           "status": "PASS",
           "evidence": "unbounded external store envelope (filesystem, Slurm, Kaggle API)"
+        },
+        {
+          "name": "computing_resources_envelope_declared",
+          "status": "PASS",
+          "evidence": "columns=29"
         }
       ]
     },
     "contract_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/chomsky/contracts/robust_scale_log1p.json"
   },
   {
-    "trace_path": "/lustre/work/sweeden/rogii/traces/preprocessing/parallel_multiwell_loader/trace_language.csv",
+    "trace_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/typewell_gr_alignment/trace_language.csv",
     "validation": {
-      "path": "/lustre/work/sweeden/rogii/traces/preprocessing/parallel_multiwell_loader/trace_language.csv",
+      "path": "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/typewell_gr_alignment/trace_language.csv",
       "valid": true,
       "errors": [],
       "warnings": [
         "CLI/subprocess patterns detected (Type-0 envelope evidence)"
       ],
-      "column_count": 20,
-      "row_count": 170,
+      "column_count": 29,
+      "row_count": 200,
       "agent_columns": [
         "data_downloader",
         "schema-sentinel",
@@ -981,259 +1279,28 @@
     },
     "classification": {
       "schema": "chomsky_classification_v1",
-      "agent_id": "parallel_multiwell_loader",
+      "agent_id": "typewell_gr_alignment",
       "source_paths": [
-        "/lustre/work/sweeden/rogii/traces/preprocessing/parallel_multiwell_loader/trace_language.csv"
+        "/lustre/work/sweeden/frontier-evals/project/paperbench/data/rogii/traces/preprocessing/typewell_gr_alignment/trace_language.csv"
       ],
       "sigma_trace_alphabet_encoding": [
         "add_dep",
         "add_task",
+        "align_horizontal_to_typewell",
         "align_to_sample_submission_columns",
         "architecture_review",
-        "assemble_column_transformer",
+        "assemble_alignment_feature_matrix",
         "assert_columns_match_sample",
         "assert_no_nans",
         "assert_row_count_matches_test",
-        "attach_geology_surface_features",
+        "attach_typewell_gr_at_estimated_tvt",
         "average_seed_predictions",
         "average_test_predictions",
         "bind_producers_to_type3_consumers",
-        "build_numeric_pipeline",
-        "cd /lustre/work/sweeden/rogii && cp submission.csv data/submission.csv",
-        "cd /lustre/work/sweeden/rogii && find data/train -name '*__horizontal_well.csv' -print0 | xargs -0 -P 4 wc -l",
-        "cd /lustre/work/sweeden/rogii && head -5 data/train/*__horizontal_well.csv data/train/*__typewell.csv",
-        "cd /lustre/work/sweeden/rogii && kaggle competitions download -c rogii-wellbore-geology-prediction -p data/ -q",
-        "cd /lustre/work/sweeden/rogii && kaggle competitions files -c rogii-wellbore-geology-prediction -q",
-        "cd /lustre/work/sweeden/rogii && kaggle competitions leaderboard -c rogii-wellbore-geology-prediction -q",
-        "cd /lustre/work/sweeden/rogii && kaggle competitions submissions -c rogii-wellbore-geology-prediction -q",
-        "cd /lustre/work/sweeden/rogii && kaggle competitions submit -c rogii-wellbore-geology-prediction -f submission.csv -m rogii-trace -q",
-        "cd /lustre/work/sweeden/rogii && kaggle datasets create -p artifacts/checkpoints -r zip -m rogii-checkpoints-v1",
-        "cd /lustre/work/sweeden/rogii && kaggle datasets init -p artifacts/checkpoints",
-        "cd /lustre/work/sweeden/rogii && kaggle datasets version -p artifacts/checkpoints -r zip -m rogii-checkpoints-v2",
-        "cd /lustre/work/sweeden/rogii && kaggle models create -p artifacts/model_card",
-        "cd /lustre/work/sweeden/rogii && kaggle models init -p artifacts/model_card",
-        "cd /lustre/work/sweeden/rogii && kaggle models versions create -m sweeden-ttu/rogii-wellbore-checkpoint -p artifacts/model_card -r zip",
-        "cd /lustre/work/sweeden/rogii && ls -la artifacts/",
-        "cd /lustre/work/sweeden/rogii && ls -la artifacts/checkpoints/ && test -f artifacts/checkpoints/episode_manifest.json",
-        "cd /lustre/work/sweeden/rogii && mamba run -n kc-rogii-wellbore-geology-prediction pytest tests/ -q --tb=line 2>/dev/null || pytest tests/ -q --tb=line",
-        "cd /lustre/work/sweeden/rogii && mkdir -p artifacts/checkpoints/episodes artifacts/model_card",
-        "cd /lustre/work/sweeden/rogii && python scripts/code_review_trace.py --scan-hardcoded --paths pipeline/ scripts/ hpcc/",
-        "cd /lustre/work/sweeden/rogii && python scripts/export_safetensors_adapter.py --out artifacts/checkpoints/fold_{k}.safetensors",
-        "cd /lustre/work/sweeden/rogii && python scripts/hardcoded_audit.py --out artifacts/hardcoded_parameter_summary.json --explain",
-        "cd /lustre/work/sweeden/rogii && python scripts/idempotency_review.py --artifacts-dir artifacts/ -q",
-        "cd /lustre/work/sweeden/rogii && python scripts/save_fold_checkpoint.py --out artifacts/checkpoints/fold_{k}.pkl",
-        "cd /lustre/work/sweeden/rogii && python scripts/write_dataset_metadata.py -p artifacts/checkpoints -o artifacts/checkpoints/dataset-metadata.json",
-        "cd /lustre/work/sweeden/rogii && python scripts/write_episode_manifest.py --out artifacts/checkpoints/episode_manifest.json",
-        "cd /lustre/work/sweeden/rogii && python scripts/write_kaggle_model_description.py -p artifacts/model_card",
-        "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/train_tcn.slurm",
-        "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/train_tcn_episodic.slurm",
-        "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/vague_spec_batch_matador.slurm",
-        "cd /lustre/work/sweeden/rogii && test -d data/train && test -d data/test",
-        "cd /lustre/work/sweeden/rogii && unzip -o data/rogii-wellbore-geology-prediction.zip -d data/",
-        "cd /lustre/work/sweeden/rogii && uv pip install lightgbm -q",
-        "cd /lustre/work/sweeden/rogii && uv pip install lightgbm xgboost scikit-learn pandas numpy -q",
-        "choose_cv_scheme",
-        "code_review",
-        "collect_oof_predictions",
-        "compare_to_baseline",
-        "compute_mean_oof_rmse",
-        "compute_missingness_rates",
-        "compute_residuals",
-        "compute_rmse_per_fold",
-        "compute_rolling_features",
-        "compute_row_counts",
-        "count_unique_groups",
-        "define_episode_boundaries_by_well_or_fold",
-        "derive_well_id_from_path",
-        "design_factorial_and_episodic_training",
-        "detect_sentinel_values",
-        "dispatch",
-        "emit_fold_indices",
-        "emit_review_findings_markdown",
-        "engineer_per_well_feature_matrix",
-        "generate_sample_submission_from_checkpoint",
-        "idempotency_review",
-        "identify_worst_wells",
-        "infer_surface_column_roles",
-        "infer_target_columns",
-        "inspect_well_and_surface_column_schema",
-        "instantiate_groupkfold",
-        "inverse_log1p",
-        "kaggle --version",
-        "kaggle config view -q",
-        "kaggle kernels push --help",
-        "load_checkpoint_pkl_or_safetensors",
-        "load_episode_checkpoints",
-        "load_fold_models",
-        "load_sample_submission",
-        "log_best_iteration",
-        "normalize_required_feature_columns",
-        "pin_seed",
-        "plan_episodic_training_schedule",
-        "plot_geology_surface_columns",
-        "plot_residuals_vs_target",
-        "predict_per_fold",
-        "print_head_describe",
-        "provide_groups",
-        "recommend_group_key",
-        "record",
-        "record_architecture_review_adr",
-        "record_checkpoint_artifact_policy",
-        "record_initial_adr",
-        "record_kaggle_dataset_or_model_publish_adr",
-        "register_schema",
-        "replace_sentinels_with_nan",
-        "report_std_across_folds",
-        "review_checkpoint_manifest_vs_training_plan",
-        "review_shortcuts_and_hardcoded_values",
-        "select_best_episode_by_oof_rmse",
-        "serialize_markdown",
-        "set_episode_max_steps_and_patience",
-        "set_id_column",
-        "set_metric_rmse",
-        "set_objective_regression",
-        "set_prediction_columns",
-        "slice_by_depth_bin",
-        "slice_by_well",
-        "squeue -u $USER -n rogii_tcn -h",
-        "statistical_mathematical_soundness_review",
-        "summarize_hardcoded_parameters",
-        "summarize_hardcoded_variables_with_explanations",
-        "test_review",
-        "topological_order",
-        "train_with_seed_2024",
-        "train_with_seed_42",
-        "train_with_seed_69",
-        "training_review",
-        "type3_consumer_bound_architecture_decision_recorder",
-        "type3_consumer_bound_architecture_decision_recorder_after_cli",
-        "type3_consumer_bound_cv_orchestrator",
-        "type3_consumer_bound_data_downloader",
-        "type3_consumer_bound_data_downloader_after_cli",
-        "type3_consumer_bound_eda_profiler",
-        "type3_consumer_bound_error_analyzer",
-        "type3_consumer_bound_error_analyzer_after_cli",
-        "type3_consumer_bound_experiment_design_architect",
-        "type3_consumer_bound_experiment_design_architect_after_cli",
-        "type3_consumer_bound_feature_engineer",
-        "type3_consumer_bound_kaggle_submitter",
-        "type3_consumer_bound_kaggle_submitter_after_cli",
-        "type3_consumer_bound_model_ensembler",
-        "type3_consumer_bound_model_trainer",
-        "type3_consumer_bound_model_trainer_after_cli",
-        "type3_consumer_bound_oof_evaluator",
-        "type3_consumer_bound_predictor",
-        "type3_consumer_bound_preprocessor",
-        "type3_consumer_bound_seed_control_officer",
-        "type3_consumer_bound_seed_control_officer_after_cli",
-        "type3_consumer_bound_submission_formatter",
-        "type3_consumer_bound_target_diagnostician",
-        "type3_consumer_bound_well_group_detector",
-        "verify_cv_splits_respect_group_leakage_constraints",
-        "verify_rerun_produces_identical_artifacts",
-        "verify_rmse_objective_matches_competition_metric"
-      ],
-      "predicted_chomsky_class": "Type-0",
-      "structural_witnesses": [
-        "CLI/subprocess tokens in trace alphabet (kaggle/sbatch/uv/etc.)",
-        "dependency-graph tokens: add_task/add_dep/topological_order/dispatch"
-      ],
-      "memory_hypothesis": "unbounded external store envelope (filesystem, Slurm, Kaggle API)",
-      "probe_plan_ref": null,
-      "vv_obligation_budget": 4
-    },
-    "verification": {
-      "schema": "verification_report_v1",
-      "agent_id": "parallel_multiwell_loader",
-      "predicted_class": "Type-0",
-      "demoted_to": null,
-      "checks": [
-        {
-          "name": "schema_version",
-          "status": "PASS",
-          "evidence": "chomsky_classification_v1"
-        },
-        {
-          "name": "agent_id_present",
-          "status": "PASS",
-          "evidence": "parallel_multiwell_loader"
-        },
-        {
-          "name": "alphabet_documented",
-          "status": "PASS",
-          "evidence": "146 tokens"
-        },
-        {
-          "name": "trace_csv_valid",
-          "status": "PASS",
-          "evidence": "ok"
-        },
-        {
-          "name": "type0_external_store",
-          "status": "PASS",
-          "evidence": "unbounded external store envelope (filesystem, Slurm, Kaggle API)"
-        }
-      ]
-    },
-    "contract_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/chomsky/contracts/parallel_multiwell_loader.json"
-  },
-  {
-    "trace_path": "/lustre/work/sweeden/rogii/traces/preprocessing/formation_plane_spatial/trace_language.csv",
-    "validation": {
-      "path": "/lustre/work/sweeden/rogii/traces/preprocessing/formation_plane_spatial/trace_language.csv",
-      "valid": true,
-      "errors": [],
-      "warnings": [
-        "CLI/subprocess patterns detected (Type-0 envelope evidence)"
-      ],
-      "column_count": 20,
-      "row_count": 168,
-      "agent_columns": [
-        "data_downloader",
-        "schema-sentinel",
-        "eda_profiler",
-        "well_group_detector",
-        "target_diagnostician",
-        "feature_engineer",
-        "preprocessor",
-        "cv_orchestrator",
-        "model_trainer",
-        "model_ensembler",
-        "predictor",
-        "oof_evaluator",
-        "error_analyzer",
-        "submission_formatter",
-        "submission_validator",
-        "kaggle_submitter",
-        "seed-control-officer",
-        "experiment-design-architect",
-        "architecture-decision-recorder",
-        "dependency-graph-orchestrator"
-      ]
-    },
-    "classification": {
-      "schema": "chomsky_classification_v1",
-      "agent_id": "formation_plane_spatial",
-      "source_paths": [
-        "/lustre/work/sweeden/rogii/traces/preprocessing/formation_plane_spatial/trace_language.csv"
-      ],
-      "sigma_trace_alphabet_encoding": [
-        "add_dep",
-        "add_task",
-        "align_to_sample_submission_columns",
-        "architecture_review",
-        "assemble_column_transformer",
-        "assert_columns_match_sample",
-        "assert_no_nans",
-        "assert_row_count_matches_test",
-        "average_seed_predictions",
-        "average_test_predictions",
-        "bind_producers_to_type3_consumers",
-        "build_highcard_pipeline",
-        "build_numeric_pipeline",
+        "build_typewell_gr_interpolator",
         "cd /lustre/work/sweeden/rogii && cp submission.csv data/submission.csv",
         "cd /lustre/work/sweeden/rogii && find data/train -name '*__horizontal_well.csv' | sort",
-        "cd /lustre/work/sweeden/rogii && find data/train -name '*__horizontal_well.csv' | wc -l",
+        "cd /lustre/work/sweeden/rogii && find data/train -name '*__typewell.csv' | sort",
         "cd /lustre/work/sweeden/rogii && kaggle competitions download -c rogii-wellbore-geology-prediction -p data/ -q",
         "cd /lustre/work/sweeden/rogii && kaggle competitions files -c rogii-wellbore-geology-prediction -q",
         "cd /lustre/work/sweeden/rogii && kaggle competitions leaderboard -c rogii-wellbore-geology-prediction -q",
@@ -1250,6 +1317,7 @@
         "cd /lustre/work/sweeden/rogii && mamba run -n kc-rogii-wellbore-geology-prediction pytest tests/ -q --tb=line 2>/dev/null || pytest tests/ -q --tb=line",
         "cd /lustre/work/sweeden/rogii && mkdir -p artifacts/checkpoints/episodes artifacts/model_card",
         "cd /lustre/work/sweeden/rogii && python scripts/code_review_trace.py --scan-hardcoded --paths pipeline/ scripts/ hpcc/",
+        "cd /lustre/work/sweeden/rogii && python scripts/evaluate_computing_resources.py --trace /lustre/work/sweeden/rogii/traces/preprocessing/typewell_gr_alignment/trace_language.csv --variant typewell_gr_alignment -q",
         "cd /lustre/work/sweeden/rogii && python scripts/export_safetensors_adapter.py --out artifacts/checkpoints/fold_{k}.safetensors",
         "cd /lustre/work/sweeden/rogii && python scripts/hardcoded_audit.py --out artifacts/hardcoded_parameter_summary.json --explain",
         "cd /lustre/work/sweeden/rogii && python scripts/idempotency_review.py --artifacts-dir artifacts/ -q",
@@ -1260,32 +1328,35 @@
         "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/train_tcn.slurm",
         "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/train_tcn_episodic.slurm",
         "cd /lustre/work/sweeden/rogii && sbatch --parsable hpcc/vague_spec_batch_matador.slurm",
+        "cd /lustre/work/sweeden/rogii && test $(find data/train -name '*__horizontal_well.csv' | wc -l) -eq $(find data/train -name '*__typewell.csv' | wc -l)",
         "cd /lustre/work/sweeden/rogii && unzip -o data/rogii-wellbore-geology-prediction.zip -d data/",
         "cd /lustre/work/sweeden/rogii && uv pip install lightgbm -q",
+        "check_train_test_well_disjoint",
         "choose_cv_scheme",
         "code_review",
         "collect_oof_predictions",
         "compare_to_baseline",
-        "compute_azimuth_inclination",
-        "compute_drilling_geometry_features",
+        "compute_gr_correlation_baseline",
         "compute_mean_oof_rmse",
-        "compute_pairwise_well_distances",
         "compute_residuals",
         "compute_rmse_per_fold",
-        "compute_rolling_features",
-        "compute_summary_stats",
+        "compute_row_counts",
         "define_episode_boundaries_by_well_or_fold",
+        "derive_well_id_from_filename",
         "design_factorial_and_episodic_training",
         "detect_sentinel_values",
         "dispatch",
         "emit_fold_indices",
         "emit_review_findings_markdown",
-        "encode_formation_codes",
-        "fit_formation_plane_knn",
+        "estimate_tvt_from_gr",
+        "evaluate_computing_resources_chomsky_rubric",
+        "evaluate_gr_baseline_rmse_by_well",
         "generate_sample_submission_from_checkpoint",
+        "gr_to_tvt_lookup",
         "idempotency_review",
         "identify_worst_wells",
         "infer_target_columns",
+        "inspect_gr_missingness_by_well",
         "instantiate_groupkfold",
         "inverse_log1p",
         "kaggle --version",
@@ -1294,12 +1365,13 @@
         "load_checkpoint_pkl_or_safetensors",
         "load_episode_checkpoints",
         "load_fold_models",
+        "load_horizontal_well_schema",
         "load_sample_submission",
+        "load_typewell_schema",
         "log_best_iteration",
-        "ollama show granite4:3b",
         "pin_seed",
         "plan_episodic_training_schedule",
-        "plot_correlation_matrix",
+        "plot_horizontal_vs_typewell_gr",
         "plot_residuals_vs_target",
         "predict_per_fold",
         "print_head_describe",
@@ -1310,6 +1382,7 @@
         "record_checkpoint_artifact_policy",
         "record_initial_adr",
         "record_kaggle_dataset_or_model_publish_adr",
+        "register_paired_well_ids",
         "register_schema",
         "replace_sentinels_with_nan",
         "report_std_across_folds",
@@ -1358,7 +1431,8 @@
         "type3_consumer_bound_submission_formatter",
         "type3_consumer_bound_target_diagnostician",
         "type3_consumer_bound_well_group_detector",
-        "validate_xyz_gr_columns",
+        "validate_resource_bounds_per_chomsky_class",
+        "validate_slurm_envelope_vs_hpcc_scripts",
         "verify_cv_splits_respect_group_leakage_constraints",
         "verify_rerun_produces_identical_artifacts",
         "verify_rmse_objective_matches_competition_metric"
@@ -1374,7 +1448,7 @@
     },
     "verification": {
       "schema": "verification_report_v1",
-      "agent_id": "formation_plane_spatial",
+      "agent_id": "typewell_gr_alignment",
       "predicted_class": "Type-0",
       "demoted_to": null,
       "checks": [
@@ -1386,12 +1460,12 @@
         {
           "name": "agent_id_present",
           "status": "PASS",
-          "evidence": "formation_plane_spatial"
+          "evidence": "typewell_gr_alignment"
         },
         {
           "name": "alphabet_documented",
           "status": "PASS",
-          "evidence": "144 tokens"
+          "evidence": "152 tokens"
         },
         {
           "name": "trace_csv_valid",
@@ -1399,12 +1473,22 @@
           "evidence": "ok"
         },
         {
+          "name": "producer_type3_consumer_bounds",
+          "status": "PASS",
+          "evidence": "all producer lanes bounded by Type-3 consumers"
+        },
+        {
           "name": "type0_external_store",
           "status": "PASS",
           "evidence": "unbounded external store envelope (filesystem, Slurm, Kaggle API)"
+        },
+        {
+          "name": "computing_resources_envelope_declared",
+          "status": "PASS",
+          "evidence": "columns=29"
         }
       ]
     },
-    "contract_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/chomsky/contracts/formation_plane_spatial.json"
+    "contract_path": "/lustre/work/sweeden/frontier-evals/project/paperbench/paperbench/chomsky/contracts/typewell_gr_alignment.json"
   }
 ]

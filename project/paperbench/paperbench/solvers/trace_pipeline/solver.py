@@ -16,7 +16,7 @@ from paperbench.solvers.utils import check_for_existing_run
 
 logger = structlog.stdlib.get_logger(component=__name__)
 
-ROGII_ROOT = Path("/lustre/work/sweeden/rogii")
+from paperbench.trace_pipeline.paths import resolve_rogii_root, resolve_trace_path
 
 
 @chz.chz
@@ -33,10 +33,11 @@ class TracePipelineSolver(BasePBSolver):
             return agent_output
 
         start = time.time()
-        trace = ROGII_ROOT / "traces" / "preprocessing" / self.variant / "trace_language.csv"
+        rogii_root = resolve_rogii_root()
+        trace = resolve_trace_path(self.variant)
         script = (
             f"cd /lustre/work/sweeden/frontier-evals/project/paperbench && "
-            f"uv run python -m paperbench.trace_pipeline.orchestrator "
+            f"ROGII_ROOT={rogii_root} uv run python -m paperbench.trace_pipeline.orchestrator "
             f"--variant {self.variant} --trace-path {trace} --dry-run"
         )
         await computer.send_shell_command(script)
@@ -44,7 +45,7 @@ class TracePipelineSolver(BasePBSolver):
             "#!/bin/bash\n"
             "set -euo pipefail\n"
             f"cd /lustre/work/sweeden/frontier-evals/project/paperbench\n"
-            f"uv run python -m paperbench.trace_pipeline.orchestrator --variant {self.variant} --dry-run\n"
+            f"ROGII_ROOT={rogii_root} uv run python -m paperbench.trace_pipeline.orchestrator --variant {self.variant} --dry-run\n"
             f"uv run python -m paperbench.scripts.implement_agent_tracing --validate-traces\n"
         )
         await computer.upload(repro.encode(), "/home/submission/reproduce.sh")
