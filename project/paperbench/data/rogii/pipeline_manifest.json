@@ -1,0 +1,111 @@
+{
+  "source": "frontier.yaml#rogii_pipeline",
+  "ml_code_root": "/lustre/work/sweeden/rogii",
+  "hpcc_source": "/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/hpcc",
+  "phases": [
+    "01_data_analysis",
+    "02_statistical_framework",
+    "03_feature_engineering",
+    "04_model_training",
+    "05_evaluation",
+    "06_submission"
+  ],
+  "pipelines": [
+    {
+      "variant": "baseline_column_transformer",
+      "worktree": "agent-tracing-trace-baseline",
+      "branch": "trace/baseline-column-transformer",
+      "slurm_job_tag": "trace_baseline",
+      "agent_tracing_root": "/lustre/work/sweeden/agent-tracing-trace-baseline",
+      "variant_dir": "/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/traces/preprocessing/baseline_column_transformer",
+      "trace_csv": "/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/traces/preprocessing/baseline_column_transformer/trace_language.csv",
+      "submit_wrapper": "/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/generated/submit_baseline.sh",
+      "trace_exists": true,
+      "actions": [
+        "symlink hpcc -> agent-tracing-trace-baseline",
+        "wrote submit_baseline.sh",
+        "wrote examples/rogii/traces/preprocessing/baseline_column_transformer/run_pipeline.sh"
+      ]
+    },
+    {
+      "variant": "typewell_gr_alignment",
+      "worktree": "agent-tracing-trace-typewell",
+      "branch": "trace/typewell-gr-alignment",
+      "slurm_job_tag": "trace_typewell",
+      "agent_tracing_root": "/lustre/work/sweeden/agent-tracing-trace-typewell",
+      "variant_dir": "/lustre/work/sweeden/agent-tracing-trace-typewell/examples/rogii/traces/preprocessing/typewell_gr_alignment",
+      "trace_csv": "/lustre/work/sweeden/agent-tracing-trace-typewell/examples/rogii/traces/preprocessing/typewell_gr_alignment/trace_language.csv",
+      "submit_wrapper": "/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/generated/submit_typewell.sh",
+      "trace_exists": true,
+      "actions": [
+        "sync _shared/ -> agent-tracing-trace-typewell",
+        "wrote submit_typewell.sh",
+        "wrote examples/rogii/traces/preprocessing/typewell_gr_alignment/run_pipeline.sh"
+      ]
+    },
+    {
+      "variant": "ps_point_leakage_aware",
+      "worktree": "agent-tracing-trace-ps",
+      "branch": "trace/ps-point-leakage-aware",
+      "slurm_job_tag": "trace_ps",
+      "agent_tracing_root": "/lustre/work/sweeden/agent-tracing-trace-ps",
+      "variant_dir": "/lustre/work/sweeden/agent-tracing-trace-ps/examples/rogii/traces/preprocessing/ps_point_leakage_aware",
+      "trace_csv": "/lustre/work/sweeden/agent-tracing-trace-ps/examples/rogii/traces/preprocessing/ps_point_leakage_aware/trace_language.csv",
+      "submit_wrapper": "/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/generated/submit_ps.sh",
+      "trace_exists": true,
+      "actions": [
+        "sync _shared/ -> agent-tracing-trace-ps",
+        "wrote submit_ps.sh",
+        "wrote examples/rogii/traces/preprocessing/ps_point_leakage_aware/run_pipeline.sh"
+      ]
+    },
+    {
+      "variant": "robust_scale_log1p",
+      "worktree": "agent-tracing-trace-robust",
+      "branch": "trace/robust-scale-log1p",
+      "slurm_job_tag": "trace_robust",
+      "agent_tracing_root": "/lustre/work/sweeden/agent-tracing-trace-robust",
+      "variant_dir": "/lustre/work/sweeden/agent-tracing-trace-robust/examples/rogii/traces/preprocessing/robust_scale_log1p",
+      "trace_csv": "/lustre/work/sweeden/agent-tracing-trace-robust/examples/rogii/traces/preprocessing/robust_scale_log1p/trace_language.csv",
+      "submit_wrapper": "/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/generated/submit_robust.sh",
+      "trace_exists": true,
+      "actions": [
+        "sync _shared/ -> agent-tracing-trace-robust",
+        "wrote submit_robust.sh",
+        "wrote examples/rogii/traces/preprocessing/robust_scale_log1p/run_pipeline.sh"
+      ]
+    },
+    {
+      "variant": "parallel_multiwell_loader",
+      "worktree": "agent-tracing-trace-parallel",
+      "branch": "trace/parallel-multiwell-loader",
+      "slurm_job_tag": "trace_parallel",
+      "agent_tracing_root": "/lustre/work/sweeden/agent-tracing-trace-parallel",
+      "variant_dir": "/lustre/work/sweeden/agent-tracing-trace-parallel/examples/rogii/traces/preprocessing/parallel_multiwell_loader",
+      "trace_csv": "/lustre/work/sweeden/agent-tracing-trace-parallel/examples/rogii/traces/preprocessing/parallel_multiwell_loader/trace_language.csv",
+      "submit_wrapper": "/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/generated/submit_parallel.sh",
+      "trace_exists": true,
+      "actions": [
+        "sync _shared/ -> agent-tracing-trace-parallel",
+        "wrote submit_parallel.sh",
+        "wrote examples/rogii/traces/preprocessing/parallel_multiwell_loader/run_pipeline.sh"
+      ]
+    },
+    {
+      "variant": "formation_plane_spatial",
+      "worktree": "agent-tracing-trace-formation",
+      "branch": "trace/formation-plane-spatial",
+      "slurm_job_tag": "trace_formation",
+      "agent_tracing_root": "/lustre/work/sweeden/agent-tracing-trace-formation",
+      "variant_dir": "/lustre/work/sweeden/agent-tracing-trace-formation/examples/rogii/traces/preprocessing/formation_plane_spatial",
+      "trace_csv": "/lustre/work/sweeden/agent-tracing-trace-formation/examples/rogii/traces/preprocessing/formation_plane_spatial/trace_language.csv",
+      "submit_wrapper": "/lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/generated/submit_formation.sh",
+      "trace_exists": true,
+      "actions": [
+        "sync _shared/ -> agent-tracing-trace-formation",
+        "wrote submit_formation.sh",
+        "wrote examples/rogii/traces/preprocessing/formation_plane_spatial/run_pipeline.sh"
+      ]
+    }
+  ]
+}

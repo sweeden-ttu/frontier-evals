@@ -66,3 +66,44 @@ orchestration:
 build:
   tool: uv
   root: project/paperbench
+
+rogii_pipeline:
+  sweeden_root: /lustre/work/sweeden
+  primary_worktree: agent-tracing-trace-baseline
+  unified_worktree: agent-tracing
+  ml_code_root: /lustre/work/sweeden/rogii
+  hpcc_source: /lustre/work/sweeden/agent-tracing-trace-baseline/examples/rogii/hpcc
+  conda_prefix: /lustre/work/sweeden/sweeden/envs/rogii-trace-slurm
+  slurm_partition: matador
+  phases:
+    - 01_data_analysis
+    - 02_statistical_framework
+    - 03_feature_engineering
+    - 04_model_training
+    - 05_evaluation
+    - 06_submission
+  variants:
+    - slug: baseline_column_transformer
+      worktree: agent-tracing-trace-baseline
+      branch: trace/baseline-column-transformer
+      slurm_job_tag: trace_baseline
+    - slug: typewell_gr_alignment
+      worktree: agent-tracing-trace-typewell
+      branch: trace/typewell-gr-alignment
+      slurm_job_tag: trace_typewell
+    - slug: ps_point_leakage_aware
+      worktree: agent-tracing-trace-ps
+      branch: trace/ps-point-leakage-aware
+      slurm_job_tag: trace_ps
+    - slug: robust_scale_log1p
+      worktree: agent-tracing-trace-robust
+      branch: trace/robust-scale-log1p
+      slurm_job_tag: trace_robust
+    - slug: parallel_multiwell_loader
+      worktree: agent-tracing-trace-parallel
+      branch: trace/parallel-multiwell-loader
+      slurm_job_tag: trace_parallel
+    - slug: formation_plane_spatial
+      worktree: agent-tracing-trace-formation
+      branch: trace/formation-plane-spatial
+      slurm_job_tag: trace_formation
